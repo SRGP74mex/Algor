@@ -7,6 +7,20 @@ con Corsair.
 **Versión preliminar para validación comunitaria.** La compatibilidad física confirmada
 se limita al equipo indicado abajo; detectar un chip no equivale a validar todos sus conectores.
 
+## Capturas de pantalla
+
+<p align="center">
+  <img src="screenshots/panel-general.png" alt="Panel General: medidores, curvas rápidas y telemetría en vivo" width="800">
+</p>
+<p align="center">
+  <img src="screenshots/simulacion-curvas.png" alt="Simulación de curvas de ventilador" width="400">
+  <img src="screenshots/pantalla-lcd-cap.png" alt="Personalización de la pantalla LCD Cap" width="400">
+</p>
+<p align="center">
+  <img src="screenshots/identificar-ventiladores.png" alt="Asistente para identificar bomba y ventiladores" width="400">
+  <img src="screenshots/ajustes-alertas-permisos.png" alt="Ajustes: alertas, permisos USB y control PWM opt-in" width="400">
+</p>
+
 ## Funciones y alcance
 
 - Temperatura y carga de CPU, telemetría GPU y sensores disponibles en Linux.

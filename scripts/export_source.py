@@ -6,7 +6,7 @@ import shutil
 
 ROOT = Path(__file__).resolve().parents[1]
 ROOT_FILES = {'.gitignore', 'README.md', 'LICENSE', 'requirements.txt', 'requirements-tested.txt',
-              'main.py', 'setup_udev.sh', 'setup_udev_pwm.sh', 'CONTRIBUTING.md', 'THIRD_PARTY_NOTICES.md'}
+              'main.py', 'setup_udev.sh', 'setup_udev_pwm.sh', 'install.sh', 'CONTRIBUTING.md', 'THIRD_PARTY_NOTICES.md'}
 # Extensiones de catálogo de idioma: .pot (plantilla), .po (traducción editable),
 # .mo (compilado, lo que gettext realmente lee en runtime) — las tres se
 # publican; sin el .mo, la app funcionaría pero mostraría siempre español
@@ -37,6 +37,8 @@ def publishable(path):
         return path.name in DOCS and len(parts) == 2
     if parts[0] == 'scripts':
         return path.name in SCRIPTS and len(parts) == 2
+    if parts[0] == 'screenshots':
+        return path.suffix.lower() in ('.png', '.jpg', '.jpeg') and len(parts) == 2
     return False
 
 
