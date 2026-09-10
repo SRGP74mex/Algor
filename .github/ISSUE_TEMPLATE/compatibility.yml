@@ -1,0 +1,41 @@
+name: Resultado de compatibilidad
+description: Comparte pruebas de tu equipo sin cambiar el control de ventiladores.
+title: '[Compatibilidad] '
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Versión o commit probado
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Diagnóstico revisado
+      description: Incluye modelo del LCD, placa, distribución y kernel; puedes usar scripts/diagnostics.py.
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: Resultado de cada prueba
+      description: Usa Funciona / Falla / No probado. Consulta docs/COMPATIBILITY.md.
+      value: |
+        Instalación:
+        Temperatura CPU:
+        Temperatura GPU:
+        RPM y asignaciones:
+        Notificaciones:
+        LCD imagen:
+        Brillo y giro:
+        GIF durante la sesión:
+        Guardado en memoria y persistencia al salir:
+        Inicio autónomo sin iCUE:
+        Suspensión/reanudación:
+        Arranque tras pérdida total de alimentación USB:
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Observaciones y errores

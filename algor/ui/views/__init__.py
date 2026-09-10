@@ -1,0 +1,4 @@
+"""
+View panels for Algor
+"""
+

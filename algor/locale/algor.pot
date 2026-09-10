@@ -1,0 +1,1150 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Algor package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Algor\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-09 18:30-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid " No se pudo escribir el historial: "
+msgstr ""
+
+msgid "(sin salida de pkexec)"
+msgstr ""
+
+msgid ""
+"1. Cierra iCUE y Windows; libera el USB de VMware.\n"
+"2. Selecciona contenido reconocible y activa ambos inicios automáticos.\n"
+"3. Apaga Linux normalmente. Con el equipo apagado, corta la alimentación de "
+"la fuente hasta que el LCD se apague; después vuelve a encender.\n"
+"4. Entra directamente en Linux, sin abrir la VM, y comprueba imagen, brillo "
+"y sensores. «LCD activo» confirma envío USB, no la imagen visible.\n"
+"5. Guarda tu trabajo, suspende y reanuda. Comprueba que se recupera el LCD.\n"
+"El historial está en Ajustes → Abrir historial de eventos. No desconectes el "
+"USB interno con el equipo encendido."
+msgstr ""
+
+msgid ""
+"1. Selecciona una lectura.  2. Identifica el cable y asigna su función.\n"
+"3. Confirma la asociación y guarda. El control permanece en BIOS.\n"
+"No se varían voltajes ni se detienen ventiladores. Revisa cables con el "
+"equipo apagado."
+msgstr ""
+
+msgid "Abortado — restaurando automático."
+msgstr ""
+
+msgid "Abortar"
+msgstr ""
+
+msgid "Abrir carpeta de imágenes y GIF"
+msgstr ""
+
+msgid "Abrir historial de eventos"
+msgstr ""
+
+msgid "Activar Reactivo"
+msgstr ""
+
+msgid "Activar Todo"
+msgstr ""
+
+msgid "Activar supervisión y notificaciones"
+msgstr ""
+
+msgid ""
+"Ajusta el contenido al montaje de tu equipo. Se conserva la orientación "
+"física guardada en el LCD."
+msgstr ""
+
+msgid "Alertas de temperatura y disponibilidad"
+msgstr ""
+
+msgid "Alertas desactivadas para este canal."
+msgstr ""
+
+msgid "Alertas habilitadas para este canal."
+msgstr ""
+
+msgid "Algor LCD: Detectado (USB)"
+msgstr ""
+
+msgid "Algor cerrado."
+msgstr ""
+
+msgid "Algor iniciado."
+msgstr ""
+
+msgid "Algor · supervisión"
+msgstr ""
+
+msgid "Algor: Conectado"
+msgstr ""
+
+msgid "Almacenamiento"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Aplica de verdad las curvas de Simulación de curvas a los canales que hayas "
+"probado y confirmado en «Identificar bomba y ventiladores». La bomba nunca "
+"queda incluida. Nunca se escribe menos de {floor}%, sin importar la curva. "
+"El permiso de abajo es intencionalmente más amplio que lo que la app "
+"realmente usa — la elegibilidad por canal es la barrera real. Reactivo nunca "
+"se recuerda entre reinicios: cada sesión empieza en Automático."
+msgstr ""
+
+msgid "Aplicar"
+msgstr ""
+
+msgid "Archivo propio"
+msgstr ""
+
+msgid ""
+"Archivo propio: preparación local, seguida de guardado manual. GIF: "
+"intervalo medio; las pausas individuales pueden cambiar. Optimización "
+"automática hasta 150 cuadros y 12 MiB preparados; conserva el archivo "
+"original."
+msgstr ""
+
+msgid "Arrastra para redimensionar la ventana"
+msgstr ""
+
+msgid "Asignación eliminada."
+msgstr ""
+
+msgid "Asignación guardada. "
+msgstr ""
+
+msgid "Avisar por RPM bajas o pérdida de lectura"
+msgstr ""
+
+msgid "Aviso"
+msgstr ""
+
+msgid ""
+"Aviso tras 2 s; crítica inmediata; recuperación con margen de 3 °C. Pérdidas "
+"de sensores/LCD tras 10 s. Ajusta los umbrales a tu equipo. Supervisa "
+"mientras Algor está abierto, incluso en la bandeja. Las alertas RPM se "
+"habilitan por canal en Identificar ventiladores."
+msgstr ""
+
+#, python-brace-format
+msgid "Bajando a {percent}%"
+msgstr ""
+
+#, python-brace-format
+msgid "Bajando a {percent}% — confirma que sigue girando. {seconds}s..."
+msgstr ""
+
+msgid "Bomba"
+msgstr ""
+
+msgid "Bomba AIO"
+msgstr ""
+
+msgid "Brillo al iniciar la sesión"
+msgstr ""
+
+msgid "CPU Frecuencia"
+msgstr ""
+
+msgid "CPU Frecuencia: -- MHz"
+msgstr ""
+
+#, python-brace-format
+msgid "CPU Frecuencia: {value:.0f} MHz"
+msgstr ""
+
+msgid "CPU Núcleo Máx."
+msgstr ""
+
+msgid "CPU Package"
+msgstr ""
+
+msgid "CPU Package (°C)"
+msgstr ""
+
+msgid "CPU Uso"
+msgstr ""
+
+msgid "CPU Uso: -- %"
+msgstr ""
+
+#, python-brace-format
+msgid "CPU Uso: {value:.1f}%"
+msgstr ""
+
+msgid ""
+"CPU: los ventiladores acompañan la temperatura o no hay evidencia suficiente "
+"para dudarlo."
+msgstr ""
+
+msgid ""
+"CPU: sin respuesta de ventiladores detectada pese al aumento de temperatura."
+msgstr ""
+
+msgid "CRC de la imagen confirmado."
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Canal PWM restaurado a automático (sesión anterior sin cierre limpio): "
+"{channels}"
+msgstr ""
+
+msgid "Canal detectado:"
+msgstr ""
+
+msgid "Cancelar"
+msgstr ""
+
+msgid "Candidato PWM (mismo chip; el índice no se asume, elígelo):"
+msgstr ""
+
+msgid "Carga incompleta; resultado de memoria incierto."
+msgstr ""
+
+msgid "Cerrar"
+msgstr ""
+
+msgid "Cerrar (Minimiza a la bandeja)"
+msgstr ""
+
+msgid "Chasis"
+msgstr ""
+
+msgid "Color del LCD"
+msgstr ""
+
+msgid "Color del contenido"
+msgstr ""
+
+#, python-brace-format
+msgid "Color {hex}"
+msgstr ""
+
+msgid "Comparando con la respuesta real… (reuniendo datos)"
+msgstr ""
+
+msgid "Comprobar arranque y recuperación"
+msgstr ""
+
+msgid "Comprueba que permanece al salir de Algor."
+msgstr ""
+
+msgid "Confirmado y guardado — ya elegible para Reactivo."
+msgstr ""
+
+msgid "Confirmar"
+msgstr ""
+
+msgid ""
+"Consulta completada sin escribir memoria; confirma el contenido visible en "
+"la pantalla."
+msgstr ""
+
+msgid "Consulta de memoria no admitida o interfaz no reclamada."
+msgstr ""
+
+#, python-brace-format
+msgid "Consulta no completada: {error}"
+msgstr ""
+
+msgid "Consultando memoria sin escritura…"
+msgstr ""
+
+msgid "Consultando memoria…"
+msgstr ""
+
+msgid "Consultar imagen guardada"
+msgstr ""
+
+msgid "Contenido de pantalla · 480 × 480"
+msgstr ""
+
+msgid "Contenido y sesión"
+msgstr ""
+
+msgid "Control por BIOS · solo lectura"
+msgstr ""
+
+msgid "Crítica"
+msgstr ""
+
+msgid "Cómo comprobar el arranque autónomo"
+msgstr ""
+
+msgid "Detener LCD"
+msgstr ""
+
+msgid ""
+"Detén la sesión LCD antes de guardar. La imagen elegida reemplazará la "
+"anterior."
+msgstr ""
+
+msgid "Detén la sesión LCD y espera a que termine cualquier guardado."
+msgstr ""
+
+msgid "Detén la sesión antes de preparar contenido."
+msgstr ""
+
+msgid "Duración antes de avisar:"
+msgstr ""
+
+msgid "Ejemplo: Radiador, grupo 1"
+msgstr ""
+
+#, python-brace-format
+msgid "El CRC del LCD corresponde a la imagen {name}."
+msgstr ""
+
+msgid "El CRC del LCD no corresponde a las muestras A/B/C."
+msgstr ""
+
+msgid "El LCD ya reconoce esta imagen."
+msgstr ""
+
+msgid "El brillo debe ser un entero entre 0 y 100."
+msgstr ""
+
+msgid "El cuadro LCD excedió el tiempo de transmisión."
+msgstr ""
+
+msgid ""
+"El mínimo es un umbral de alerta, no una orden de velocidad. Elige un valor "
+"adecuado a tus lecturas y equipo. La recuperación usa un margen del 10 % (al "
+"menos 50 RPM). Un distribuidor puede mostrar el tacómetro de un solo "
+"ventilador. «Sin conectar» nunca genera alertas. No se deduce la conexión de "
+"un ventilador a partir del número de un PWM."
+msgstr ""
+
+msgid "Elegir carpeta para el registro CSV"
+msgstr ""
+
+msgid "Elegir color personalizado"
+msgstr ""
+
+msgid ""
+"Elige qué sensores se muestran como medidores circulares en el Panel General."
+msgstr ""
+
+msgid "Eliminar asignación"
+msgstr ""
+
+msgid "Equilibrado"
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+#, python-brace-format
+msgid "Error al bajar a {percent}%: {error}"
+msgstr ""
+
+msgid "Esperando lecturas de sensores…"
+msgstr ""
+
+msgid "Esperando lecturas…"
+msgstr ""
+
+msgid ""
+"Esto escribe PWM real al canal verificado, con piso de 30% — nunca "
+"simulación."
+msgstr ""
+
+msgid "Extremo"
+msgstr ""
+
+#, python-brace-format
+msgid "Fallo al ejecutar pkexec: {error}"
+msgstr ""
+
+msgid "Falta permiso"
+msgstr ""
+
+#, python-brace-format
+msgid "Fan {name}"
+msgstr ""
+
+msgid "Finalización incompleta; resultado de memoria incierto."
+msgstr ""
+
+msgid "Función:"
+msgstr ""
+
+msgid ""
+"GIF en bucle mientras Algor está abierto · hasta 10 cuadros/s. Importar "
+"copia el archivo a tu biblioteca local."
+msgstr ""
+
+msgid "GPU Core (°C)"
+msgstr ""
+
+msgid "GPU Temp"
+msgstr ""
+
+msgid "GPU Uso"
+msgstr ""
+
+msgid "GPU Uso: -- %"
+msgstr ""
+
+#, python-brace-format
+msgid "GPU Uso: {value:.0f}%"
+msgstr ""
+
+msgid "GPU VRAM Usada"
+msgstr ""
+
+msgid "GPU Ventilador"
+msgstr ""
+
+msgid "Girar contenido 90°"
+msgstr ""
+
+#, python-brace-format
+msgid "Giro adicional: {deg}°"
+msgstr ""
+
+msgid "Guarda la asignación (rol confirmado) antes de probar PWM real."
+msgstr ""
+
+msgid ""
+"Guarda la imagen de esta sección como respaldo al salir. A/B/C conservan su "
+"orientación capturada. Los archivos propios incorporan el giro seleccionado "
+"al prepararlos."
+msgstr ""
+
+msgid ""
+"Guarda la telemetría seleccionada en un archivo CSV a intervalos regulares."
+msgstr ""
+
+#, python-brace-format
+msgid "Guardado no confirmado: {error} No se reintentó la escritura."
+msgstr ""
+
+msgid "Guardar A en el dispositivo"
+msgstr ""
+
+msgid "Guardar archivo propio"
+msgstr ""
+
+msgid "Guardar asignación"
+msgstr ""
+
+#, python-brace-format
+msgid "Guardar {label} en el dispositivo"
+msgstr ""
+
+msgid "Hay varios Nautilus LCD; conecta uno para esta sesión."
+msgstr ""
+
+msgid "He confirmado qué componente corresponde a este canal"
+msgstr ""
+
+msgid "Identificado pero sin probar para control PWM real."
+msgstr ""
+
+msgid "Identificador:"
+msgstr ""
+
+msgid "Identificar bomba y ventiladores"
+msgstr ""
+
+msgid "Identificar bomba y ventiladores…"
+msgstr ""
+
+msgid "Imagen / GIF de la biblioteca"
+msgstr ""
+
+msgid "Imagen al salir · memoria del dispositivo"
+msgstr ""
+
+msgid "Imagen de memoria desconocida."
+msgstr ""
+
+#, python-brace-format
+msgid "Imagen no disponible: {error}"
+msgstr ""
+
+msgid "Imagen o GIF para LCD"
+msgstr ""
+
+msgid "Importando y optimizando si es necesario…"
+msgstr ""
+
+msgid "Importar imagen / GIF…"
+msgstr ""
+
+msgid "Imágenes y GIF"
+msgstr ""
+
+msgid "Iniciar LCD"
+msgstr ""
+
+msgid "Iniciar automáticamente al iniciar sesión en Linux"
+msgstr ""
+
+msgid "Iniciar el LCD al abrir Algor"
+msgstr ""
+
+msgid "Iniciar prueba"
+msgstr ""
+
+msgid "Inicio automático"
+msgstr ""
+
+msgid ""
+"Instala una regla de este proyecto para dar a la sesión local activa acceso "
+"USB únicamente al Nautilus LCD Cap (1b1c:0c57). No habilita escrituras PWM "
+"ni cambios de voltaje en la placa base, y no añade soporte de protocolo al "
+"LCD. Después de instalarla, reinicia el equipo para aplicar los permisos."
+msgstr ""
+
+msgid "Intervalo (seg):"
+msgstr ""
+
+msgid "Intervalo de actualización:"
+msgstr ""
+
+#, python-brace-format
+msgid "Intervalo por cuadro: {ms} ms · duración prevista {sec:.2f} s."
+msgstr ""
+
+msgid "LCD detenido"
+msgstr ""
+
+msgid "LCD detenido · previsualización local"
+msgstr ""
+
+msgid "LCD no conectado a Linux. Libera el Nautilus desde VMware."
+msgstr ""
+
+msgid "LCD ocupado. Libéralo desde VMware o cierra la otra aplicación."
+msgstr ""
+
+msgid "LCD: conexión o envío fallando durante más de 10 s."
+msgstr ""
+
+msgid "LCD: interfaz conectada; enviando contenido de sesión."
+msgstr ""
+
+msgid "LCD: pausa detectada; se restablece la sesión."
+msgstr ""
+
+msgid "LCD: sesión detenida."
+msgstr ""
+
+msgid "LCD: sesión recuperada."
+msgstr ""
+
+msgid ""
+"La aplicación sigue ejecutándose en segundo plano manteniendo el LCD y "
+"monitoreando sensores."
+msgstr ""
+
+msgid "La bomba nunca se prueba ni se controla desde Algor."
+msgstr ""
+
+msgid ""
+"La imagen se mantiene mientras Algor esté en ejecución, incluso en la "
+"bandeja."
+msgstr ""
+
+msgid "La interfaz LCD no está reclamada."
+msgstr ""
+
+msgid "La interfaz del LCD no coincide con el protocolo admitido."
+msgstr ""
+
+msgid "La telemetría vuelve a responder."
+msgstr ""
+
+msgid "Las alertas RPM no aplican a canales de temperatura."
+msgstr ""
+
+msgid "Lectura en vivo:"
+msgstr ""
+
+msgid "Limitar duración (min):"
+msgstr ""
+
+msgid "Los cambios se aplican al pulsar Guardar asignación."
+msgstr ""
+
+msgid "LÍQUIDO SIN VERIFICAR"
+msgstr ""
+
+msgid "Líquido / Bomba"
+msgstr ""
+
+msgid "Líquido / Refrigerante"
+msgstr ""
+
+msgid "Líquido AIO"
+msgstr ""
+
+msgid "Líquido Refrigerante (°C)"
+msgstr ""
+
+msgid ""
+"Líquido y bomba: sensores sin verificar.\n"
+"Imágenes y GIF: guardado disponible.\n"
+"Bomba y ventiladores: controlados por BIOS."
+msgstr ""
+
+msgid "Maximizar / Restaurar"
+msgstr ""
+
+msgid ""
+"Miniatura del primer cuadro. Confirma el ritmo en el LCD; las pausas "
+"individuales pueden cambiar."
+msgstr ""
+
+msgid "Minimizar"
+msgstr ""
+
+msgid "Minimizar a la bandeja del sistema (System Tray)"
+msgstr ""
+
+msgid "Mostrar"
+msgstr ""
+
+msgid "Mostrar carga de CPU (%)"
+msgstr ""
+
+msgid "Mostrar temperatura de CPU"
+msgstr ""
+
+msgid "Mínimo de aviso:"
+msgstr ""
+
+msgid "N/D"
+msgstr ""
+
+msgid "N/D · lectura no disponible"
+msgstr ""
+
+#, python-brace-format
+msgid "NVMe #{n}"
+msgstr ""
+
+msgid "Ninguna imagen seleccionada"
+msgstr ""
+
+msgid ""
+"Ningún sensor activo. Usa \"Personalizar Panel\" para agregar medidores."
+msgstr ""
+
+msgid "No confirmado — el canal sigue sin habilitarse para escritura."
+msgstr ""
+
+msgid ""
+"No hay permiso de escritura sobre este canal. Instala el permiso de "
+"escritura PWM en Ajustes primero (requiere cerrar sesión una vez)."
+msgstr ""
+
+#, python-brace-format
+msgid "No se encontró el script {path}"
+msgstr ""
+
+#, python-brace-format
+msgid "No se pudo actualizar el inicio automático: {error}"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"No se pudo completar la instalación automática.\n"
+"\n"
+"Detalle: {detail}\n"
+"\n"
+"Ejecuta directamente en una terminal:\n"
+"\n"
+"sudo bash ./setup_udev_pwm.sh"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"No se pudo completar la instalación automática.\n"
+"\n"
+"Detalle: {detail}\n"
+"\n"
+"Si no apareció ningún diálogo de contraseña, es posible que tu sistema no "
+"tenga un agente gráfico de PolicyKit corriendo (común en instalaciones "
+"mínimas de Arch) — instala uno (ej. polkit-gnome, polkit-kde-agent) o "
+"ejecuta directamente en una terminal:\n"
+"\n"
+"sudo bash ./setup_udev.sh"
+msgstr ""
+
+#, python-brace-format
+msgid "No se pudo escribir: {error}"
+msgstr ""
+
+#, python-brace-format
+msgid "No se pudo guardar el registro: {error}"
+msgstr ""
+
+#, python-brace-format
+msgid "No se pudo importar: {message}"
+msgstr ""
+
+#, python-brace-format
+msgid "No se pudo preparar: {error}"
+msgstr ""
+
+#, python-brace-format
+msgid "No se puede preparar la imagen: {error}"
+msgstr ""
+
+msgid "Nombre:"
+msgstr ""
+
+#, python-brace-format
+msgid "PWM {name}"
+msgstr ""
+
+msgid ""
+"Para recuperar el LCD al iniciar sesión, activa también «Iniciar el LCD al "
+"abrir Algor» en Pantalla LCD Cap. La reconexión recupera contenido y brillo; "
+"no repite guardados en memoria."
+msgstr ""
+
+msgid "Permisos USB insuficientes. Revisa la regla del LCD en Ajustes."
+msgstr ""
+
+msgid "Personalizar Panel"
+msgstr ""
+
+msgid "Preparación lista. Revisa la miniatura antes de guardar."
+msgstr ""
+
+msgid "Preparando archivo local sin escribir en el LCD…"
+msgstr ""
+
+msgid "Preparando guardado…"
+msgstr ""
+
+msgid "Preparando guardado… Espera a que termine."
+msgstr ""
+
+msgid "Preparando sin escribir en el LCD…"
+msgstr ""
+
+msgid "Preparar / optimizar imagen o GIF…"
+msgstr ""
+
+msgid "Preparar imagen o GIF para memoria"
+msgstr ""
+
+msgid "Primero prepara un archivo propio."
+msgstr ""
+
+msgid "Probar control PWM real"
+msgstr ""
+
+msgid "Probar notificación"
+msgstr ""
+
+msgid "Procesador"
+msgstr ""
+
+msgid "Prueba de notificación; no es una alarma real."
+msgstr ""
+
+msgid ""
+"Prueba enviada y registrada. La notificación depende de los ajustes del "
+"escritorio."
+msgstr ""
+
+msgid "RPM en vivo: N/D"
+msgstr ""
+
+#, python-brace-format
+msgid "RPM en vivo: {rpm}"
+msgstr ""
+
+msgid "Radiador"
+msgstr ""
+
+msgid "Registro de Sensores"
+msgstr ""
+
+#, python-brace-format
+msgid "Registro detenido. Último archivo: {path}"
+msgstr ""
+
+#, python-brace-format
+msgid "Registro: {path}"
+msgstr ""
+
+#, python-brace-format
+msgid "Reporte de control incompleto: {count}/32 bytes."
+msgstr ""
+
+msgid "Reporte de finalización no admitido."
+msgstr ""
+
+msgid "Reporte de memoria no admitido."
+msgstr ""
+
+msgid "Respuesta HID incompleta o identificador inesperado."
+msgstr ""
+
+msgid "Seleccionar Sensores:"
+msgstr ""
+
+msgid "Sensores de CPU"
+msgstr ""
+
+msgid "Sesión LCD activa · confirma la imagen en la pantalla física"
+msgstr ""
+
+msgid "Sesión detenida."
+msgstr ""
+
+msgid "Silencioso"
+msgstr ""
+
+msgid "Sin actualizaciones de sensores durante más de 10 s."
+msgstr ""
+
+msgid "Sin alertas activas en los sensores supervisados."
+msgstr ""
+
+msgid ""
+"Sin canales verificados para escritura real: prueba uno en Ajustes → "
+"Identificar bomba y ventiladores. Nunca incluye la bomba."
+msgstr ""
+
+msgid ""
+"Sin canales verificados todavía — pruébalos en «Identificar bomba y "
+"ventiladores»."
+msgstr ""
+
+msgid "Sin canales verificados todavía."
+msgstr ""
+
+msgid "Sin candidatos PWM detectados en este chip."
+msgstr ""
+
+msgid "Sin conectar"
+msgstr ""
+
+msgid "Sin identificar"
+msgstr ""
+
+msgid "Sin iniciar."
+msgstr ""
+
+msgid ""
+"Sin lectura RPM confirmada para comparar (configura un canal en Mapeo de "
+"ventiladores)."
+msgstr ""
+
+msgid "Sin subida de temperatura sostenida para comparar todavía."
+msgstr ""
+
+msgid "Subiendo a 100%"
+msgstr ""
+
+#, python-brace-format
+msgid "Subiendo a {percent}% — observa/escucha el equipo. {seconds}s..."
+msgstr ""
+
+msgid "Supervisión RPM desactivada para este canal."
+msgstr ""
+
+msgid "Supervisión de alertas desactivada."
+msgstr ""
+
+msgid "Supervisión desactivada por el usuario."
+msgstr ""
+
+msgid "Tarjeta Gráfica"
+msgstr ""
+
+msgid "Temp Actual: -- °C ➔ PWM simulado: -- %"
+msgstr ""
+
+#, python-brace-format
+msgid "Temp: {temp:.1f}°C ➔ PWM simulado: {pwm}%"
+msgstr ""
+
+msgid "Tono"
+msgstr ""
+
+msgid "Tono del color del LCD"
+msgstr ""
+
+msgid "Transferencia de imagen incompleta."
+msgstr ""
+
+msgid "Ubicación:"
+msgstr ""
+
+msgid "VRAM: -- / -- MB"
+msgstr ""
+
+#, python-brace-format
+msgid "VRAM: {used:.0f} / {total:.0f} MB"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"Vas a probar control PWM real sobre un candidato para \"{label}\". Un canal "
+"a la vez, con el equipo a la vista y sin trabajo sin guardar abierto. "
+"Primero sube a 100% (sin riesgo de apagado en ninguna placa), luego baja "
+"brevemente a {low}% para confirmar que sigue girando, y se restaura "
+"automático al terminar — la misma secuencia que ya validaste a mano."
+msgstr ""
+
+msgid "Ventiladores"
+msgstr ""
+
+msgid "Ventiladores identificados"
+msgstr ""
+
+msgid ""
+"pkexec no respondió a tiempo (¿quedó esperando un diálogo de contraseña que "
+"nunca apareció?). Ejecuta en una terminal:\n"
+"\n"
+"sudo bash ./setup_udev.sh"
+msgstr ""
+
+msgid ""
+"pkexec no respondió a tiempo. Ejecuta en una terminal:\n"
+"\n"
+"sudo bash ./setup_udev_pwm.sh"
+msgstr ""
+
+msgid "temperatura crítica"
+msgstr ""
+
+msgid "temperatura elevada"
+msgstr ""
+
+msgid "temperatura recuperada"
+msgstr ""
+
+#, python-brace-format
+msgid "{count} canal(es) verificado(s) para escritura real."
+msgstr ""
+
+#, python-brace-format
+msgid "{detail} · reintentando conexión"
+msgstr ""
+
+#, python-brace-format
+msgid "{label} · Muestra local capturada"
+msgstr ""
+
+#, python-brace-format
+msgid ""
+"{label} · {count} cuadro(s) · {kib:.0f} KiB JPEG · giro preparado {deg}°."
+msgstr ""
+
+#, python-brace-format
+msgid "{label}: RPM bajas ({value:.0f}; mínimo configurado {minimum})."
+msgstr ""
+
+#, python-brace-format
+msgid "{label}: lectura RPM no disponible; no se puede confirmar el giro."
+msgstr ""
+
+#, python-brace-format
+msgid "{label}: lectura RPM recuperada ({value:.0f})."
+msgstr ""
+
+#, python-brace-format
+msgid "{label}: lectura recuperada."
+msgstr ""
+
+#, python-brace-format
+msgid "{label}: temperatura no disponible."
+msgstr ""
+
+#, python-brace-format
+msgid "{label}: {text} ({value:.1f} °C)."
+msgstr ""
+
+#, python-brace-format
+msgid "{stage} — {seconds}s restantes..."
+msgstr ""
+
+#, python-brace-format
+msgid "{value:.1f} °C (implausible)"
+msgstr ""
+
+msgid ""
+"¿Confirmas que este fue el ventilador/grupo correcto y que respondió sin "
+"ningún comportamiento anómalo (apagado, olor, ruido extraño)?"
+msgstr ""
+
+msgid ""
+"¿Eliminar la asignación de este canal? Esto borra rol, nombre, alarma y "
+"cualquier prueba PWM confirmada. No afecta al hardware."
+msgstr ""
+
+msgid "Éxito"
+msgstr ""
+
+msgid "↺ Restaurar Defecto"
+msgstr ""
+
+msgid "⏹️ Detener Registro"
+msgstr ""
+
+msgid "⏺️ Iniciar Registro"
+msgstr ""
+
+msgid "● LCD activo"
+msgstr ""
+
+msgid "● LCD detenido"
+msgstr ""
+
+msgid "● Revisar LCD"
+msgstr ""
+
+msgid "⚖️ Equilibrado"
+msgstr ""
+
+msgid "⚙️ Ajustes"
+msgstr ""
+
+msgid "⚙️ Personalizado"
+msgstr ""
+
+msgid "⚠️ Aplicar al hardware (canal verificado)"
+msgstr ""
+
+msgid ""
+"⚠️ Sin respuesta de ventiladores detectada pese al aumento de temperatura."
+msgstr ""
+
+msgid "⚡ Perfil de simulación"
+msgstr ""
+
+msgid "⚡ Rendimiento y Frecuencia de Sensores"
+msgstr ""
+
+msgid "✅ Los ventiladores responden al calor real (control por BIOS activo)."
+msgstr ""
+
+#, python-brace-format
+msgid "✅ PWM probado y confirmado: {channel}"
+msgstr ""
+
+msgid ""
+"✅ Permiso de escritura PWM instalado (grupo dedicado, solo it8792/it8620).\n"
+"Cierra sesión y vuelve a entrar para que se aplique tu pertenencia al "
+"grupo.\n"
+"Esto NO activa Reactivo por sí solo — sigue siendo un interruptor aparte, y "
+"solo escribe en canales que pruebes y confirmes uno por uno."
+msgstr ""
+
+#, python-brace-format
+msgid "✅ Registro finalizado (límite de duración alcanzado): {path}"
+msgstr ""
+
+msgid ""
+"✅ Regla USB instalada para Nautilus LCD Cap (1b1c:0c57).\n"
+"Reinicia el equipo para aplicar los permisos y retirar los permisos amplios "
+"anteriores de los dispositivos ya conectados.\n"
+"No se habilitaron escrituras PWM ni cambios de voltaje en la placa base."
+msgstr ""
+
+msgid "❌ Salir"
+msgstr ""
+
+msgid "🌀 Control real de PWM (Reactivo) — experimental"
+msgstr ""
+
+msgid "🎛️ Perfil de Curva:"
+msgstr ""
+
+msgid "🎛️ Simulación de curvas"
+msgstr ""
+
+msgid "🎯 Sensor de Control:"
+msgstr ""
+
+msgid ""
+"💡 Arrastra los puntos en la gráfica para moldear la curva de refrigeración."
+msgstr ""
+
+msgid ""
+"💧 Bomba AIO: Flujo constante óptimo (~2,300 RPM) • 🌀 Curvas de respuesta "
+"configuradas para los Ventiladores del Radiador."
+msgstr ""
+
+msgid "💻 Estado del Hardware"
+msgstr ""
+
+msgid "📁 Elegir Carpeta..."
+msgstr ""
+
+msgid "📈 Telemetría Térmica en Vivo"
+msgstr ""
+
+msgid "📊 Panel General"
+msgstr ""
+
+msgid "📝 Registro de Sensores (CSV)"
+msgstr ""
+
+msgid "🔌 Permisos USB del Nautilus LCD Cap"
+msgstr ""
+
+msgid "🔧 Control / Prueba Manual:"
+msgstr ""
+
+#, python-brace-format
+msgid "🔴 Grabando en: {path}"
+msgstr ""
+
+msgid "🖥️ Abrir Algor"
+msgstr ""
+
+msgid "🖥️ Integración con el Sistema"
+msgstr ""
+
+msgid "🖥️ Pantalla LCD Cap"
+msgstr ""
+
+msgid "🗑️ Eliminar asignación"
+msgstr ""
+
+msgid "🚀 Extremo"
+msgstr ""
+
+msgid "🛡️ Instalar permisos de escritura PWM"
+msgstr ""
+
+msgid "🛡️ Instalar permisos del LCD Cap"
+msgstr ""
+
+msgid "🤫 Silencioso"
+msgstr ""
+
+msgid "🧩 Personalizar Panel"
+msgstr ""
+
+msgid "🧩 Personalizar Panel General"
+msgstr ""
+
+msgid "🧪 Probar control PWM real (avanzado)…"
+msgstr ""

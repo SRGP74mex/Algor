@@ -1,0 +1,52 @@
+name: Tests
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.10', '3.12', '3.13']
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: Native runtime libraries
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libxcb-cursor0 libusb-1.0-0 gettext
+      - name: Python dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Source syntax and dependencies
+        run: |
+          python -m compileall -q algor scripts tests main.py
+          python -m pip check
+          bash -n setup_udev.sh
+          bash setup_udev.sh --print-rules
+          bash -n setup_udev_pwm.sh
+          bash setup_udev_pwm.sh --print-rules
+      - name: Translation catalogs compile cleanly
+        run: |
+          for po in algor/locale/*/LC_MESSAGES/algor.po; do
+            msgfmt --check "$po" -o /dev/null
+          done
+      - name: Isolated tests
+        run: python scripts/run_tests.py
+      - name: UI without hardware
+        run: python scripts/smoke_test.py
+      - name: Check public source copy without private captures
+        run: |
+          python scripts/export_source.py "$RUNNER_TEMP/algor-public"
+          cd "$RUNNER_TEMP/algor-public"
+          python scripts/run_tests.py
+          python scripts/smoke_test.py

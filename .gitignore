@@ -1,0 +1,44 @@
+# Personal media, compatibility links and capture evidence stay local.
+/local/
+/img/
+/bin/
+/captures/
+# Only the author-confirmed application icon is distributed.
+/algor/assets/icons/*
+!/algor/assets/icons/README.md
+!/algor/assets/icons/Algor.svg
+/algor/assets/memory/*.jpg
+# Historical notes from this machine (public guides remain included).
+/docs/SESION_LCD.md
+/docs/FAN_MAPPING.md
+/docs/PLAN_*.md
+/docs/HARDWARE_ARCHITECTURE.md
+/docs/PRUEBA_MEMORIA_LCD.md
+# Tool/session metadata
+/.agents/
+/.codex/
+/.claude/
+/.idea/
+/.vscode/
+# Python and build output
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+# Runtime data and secrets
+.env
+.env.*
+*.pem
+*.key
+*.pcap
+*.pcapng
+*.log
+*.csv
+*.tmp
+.DS_Store

@@ -1,0 +1,36 @@
+name: Reportar un problema
+description: Error de instalación, interfaz, sensores o LCD.
+title: '[Error] '
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Versión o commit
+    validations:
+      required: true
+  - type: textarea
+    id: hardware
+    attributes:
+      label: Equipo y entorno
+      description: Distribución, kernel, escritorio, placa, CPU y modelo/VID:PID del LCD. No incluyas números de serie.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Pasos, resultado esperado y resultado obtenido
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnóstico y registros revisados
+      description: Ejecuta python scripts/diagnostics.py. Revisa el JSON antes de pegarlo. No adjuntes capturas USB completas ni configuración personal.
+      render: text
+  - type: checkboxes
+    id: context
+    attributes:
+      label: Contexto de la prueba
+      options:
+        - label: El LCD está disponible para Linux (no asignado a una VM).
+        - label: Bomba y ventiladores permanecen controlados por BIOS.
