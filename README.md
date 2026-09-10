@@ -163,7 +163,7 @@ docs/                 Guías y compatibilidad
 
 En el espacio de desarrollo, `local/`, `captures/` e `img/` contienen medios,
 archivos históricos o enlaces locales excluidos de Git. No forman parte de la
-instalación pública. [Preparación de publicación](docs/RELEASE_CHECKLIST.md).
+instalación pública.
 
 ## Desinstalación
 
@@ -180,8 +180,8 @@ en `~/.config/algor/`, `~/.local/share/algor/media/` y
 
 ## Contribuir y licencia
 
-Consulta [CONTRIBUTING.md](CONTRIBUTING.md), el [asistente RPM](docs/ASISTENTE_VENTILADORES.md)
-y la [hoja de ruta](docs/ROADMAP.md). Los formularios de Issues recogen errores y
-resultados de compatibilidad sin exigir capturas USB completas.
+Consulta [CONTRIBUTING.md](CONTRIBUTING.md) y el [asistente RPM](docs/ASISTENTE_VENTILADORES.md).
+Los formularios de Issues recogen errores y resultados de compatibilidad sin
+exigir capturas USB completas.
 
 Código bajo [GPL-3.0](LICENSE). Recursos y marcas: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

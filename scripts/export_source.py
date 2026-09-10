@@ -12,8 +12,8 @@ ROOT_FILES = {'.gitignore', 'README.md', 'LICENSE', 'requirements.txt', 'require
 # publican; sin el .mo, la app funcionaría pero mostraría siempre español
 # aunque exista un .po sin compilar.
 LOCALE_EXTENSIONS = {'.pot', '.po', '.mo'}
-DOCS = {'ROADMAP.md', 'ASISTENTE_VENTILADORES.md', 'PRUEBA_ARRANQUE_Y_ALERTAS.md',
-        'COMPATIBILITY.md', 'MEDIA.md', 'RELEASE_CHECKLIST.md', 'LICENSING.md',
+DOCS = {'ASISTENTE_VENTILADORES.md', 'PRUEBA_ARRANQUE_Y_ALERTAS.md',
+        'COMPATIBILITY.md', 'MEDIA.md', 'LICENSING.md',
         'PROTOCOLO_LCD_CAP_OBSERVADO.md', 'PWM_REAL_CONTROL.md'}
 SCRIPTS = {'install_desktop.py', 'run_tests.py', 'smoke_test.py', 'export_source.py',
            'diagnostics.py', 'test_lcd_static.py', 'analyze_lcd_capture.py', 'analyze_lcd_memory.py', 'compare_lcd_memory.py',

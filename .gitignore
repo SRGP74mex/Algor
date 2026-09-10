@@ -14,6 +14,9 @@
 /docs/PLAN_*.md
 /docs/HARDWARE_ARCHITECTURE.md
 /docs/PRUEBA_MEMORIA_LCD.md
+# Personal roadmap/release planning, not development documentation.
+/docs/ROADMAP.md
+/docs/RELEASE_CHECKLIST.md
 # Tool/session metadata
 /.agents/
 /.codex/
