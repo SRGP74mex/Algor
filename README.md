@@ -4,6 +4,8 @@ Aplicación de escritorio para Linux: monitoreo de sensores y personalización d
 **Corsair Nautilus LCD Cap (`1b1c:0c57`)**. Proyecto independiente, sin afiliación
 con Corsair.
 
+🌐 [Read in English](README.en.md)
+
 **Versión preliminar para validación comunitaria.** La compatibilidad física confirmada
 se limita al equipo indicado abajo; detectar un chip no equivale a validar todos sus conectores.
 
@@ -20,6 +22,11 @@ se limita al equipo indicado abajo; detectar un chip no equivale a validar todos
   <img src="screenshots/identificar-ventiladores.png" alt="Asistente para identificar bomba y ventiladores" width="400">
   <img src="screenshots/ajustes-alertas-permisos.png" alt="Ajustes: alertas, permisos USB y control PWM opt-in" width="400">
 </p>
+<p align="center">
+  <img src="screenshots/alerta-rpm-bajas.png" alt="Alerta de RPM bajas en ventilador del radiador" width="280">
+  <img src="screenshots/alertas-rpm-recuperacion.png" alt="Alertas: RPM bajas y recuperación" width="280">
+  <img src="screenshots/alerta-rpm-recuperada.png" alt="Notificación de lectura RPM recuperada" width="280">
+</p>
 
 ## Funciones y alcance
 
@@ -30,6 +37,7 @@ se limita al equipo indicado abajo; detectar un chip no equivale a validar todos
 - LCD: temperatura/carga, imágenes, GIF, color, brillo y rotación.
 - Importación y optimización de archivos propios; guardado en memoria del LCD.
 - Alertas de temperatura, pérdida de lecturas y errores LCD, con historial.
+- Notificaciones nativas del sistema para RPM bajas y recuperación, con umbrales configurables por canal.
 - Asistente para identificar bomba/ventiladores y habilitar alertas RPM por canal.
 
 **Bomba y ventiladores permanecen controlados por BIOS por defecto.** Las curvas

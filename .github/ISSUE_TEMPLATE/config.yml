@@ -1,1 +1,8 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
+contact_links:
+  - name: "Compatibility matrix"
+    url: "docs/COMPATIBILITY.md"
+    about: "Check tested hardware before filing a compatibility report."
+  - name: "PWM real control documentation"
+    url: "docs/PWM_REAL_CONTROL.md"
+    about: "Read this before reporting anything related to fan or pump control."

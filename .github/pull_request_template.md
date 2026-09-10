@@ -1,14 +1,14 @@
-## Cambio
+## Change
 
-Describe el problema y el comportamiento resultante.
+Describe the problem and the resulting behavior.
 
-## Validación
+## Validation
 
 - [ ] `python scripts/run_tests.py`
 - [ ] `python scripts/smoke_test.py`
-- Hardware físico probado (o «no probado»):
+- Physical hardware tested (or "not tested"):
 
-## Alcance
+## Scope
 
-Indica cambios en permisos, transporte USB, dependencias o compatibilidad.
-No incluyas capturas USB, configuración personal ni archivos de medios locales.
+Note any changes to permissions, USB transport, dependencies or compatibility.
+Do not include full USB captures, personal configuration or local media files.

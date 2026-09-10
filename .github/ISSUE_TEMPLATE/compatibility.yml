@@ -1,41 +1,124 @@
-name: Resultado de compatibilidad
-description: Comparte pruebas de tu equipo sin cambiar el control de ventiladores.
-title: '[Compatibilidad] '
+name: "Compatibility result"
+description: "Report whether Algor works on your hardware and Linux setup."
+title: "[Compat] "
+labels: ["compatibility"]
 body:
-  - type: input
-    id: version
+  - type: markdown
     attributes:
-      label: Versión o commit probado
-    validations:
-      required: true
-  - type: textarea
-    id: environment
-    attributes:
-      label: Diagnóstico revisado
-      description: Incluye modelo del LCD, placa, distribución y kernel; puedes usar scripts/diagnostics.py.
-    validations:
-      required: true
-  - type: textarea
-    id: results
-    attributes:
-      label: Resultado de cada prueba
-      description: Usa Funciona / Falla / No probado. Consulta docs/COMPATIBILITY.md.
       value: |
-        Instalación:
-        Temperatura CPU:
-        Temperatura GPU:
-        RPM y asignaciones:
-        Notificaciones:
-        LCD imagen:
-        Brillo y giro:
-        GIF durante la sesión:
-        Guardado en memoria y persistencia al salir:
-        Inicio autónomo sin iCUE:
-        Suspensión/reanudación:
-        Arranque tras pérdida total de alimentación USB:
+        Thanks for testing Algor! This form helps build the compatibility matrix.
+        Fill in what you can — partial reports are still useful.
+        See docs/COMPATIBILITY.md for the current matrix and testing guide.
+
+  - type: input
+    id: motherboard
+    attributes:
+      label: Motherboard
+      description: "Brand and model (e.g. ASUS ROG Strix X670E-E)"
+      placeholder: "Brand Model"
     validations:
       required: true
+
+  - type: input
+    id: cpu
+    attributes:
+      label: CPU
+      description: "Processor model"
+      placeholder: "e.g. AMD Ryzen 9 7950X / Intel Core i7-14700K"
+    validations:
+      required: true
+
+  - type: input
+    id: gpu
+    attributes:
+      label: GPU
+      description: "Graphics card model and driver version"
+      placeholder: "e.g. NVIDIA RTX 4070 Ti (driver 550.xx) / AMD RX 7900 XTX (mesa 24.x)"
+
+  - type: input
+    id: cooler
+    attributes:
+      label: AIO cooler model
+      description: "Corsair cooler model with LCD Cap"
+      placeholder: "e.g. Corsair Nautilus 360 RS / Corsair H150i Elite LCD"
+    validations:
+      required: true
+
+  - type: input
+    id: usb_id
+    attributes:
+      label: USB ID
+      description: "Output of `lsusb | grep 1b1c` for your Corsair device"
+      placeholder: "e.g. Bus 001 Device 005: ID 1b1c:0c57 Corsair"
+    validations:
+      required: true
+
+  - type: input
+    id: distro
+    attributes:
+      label: Distribution and version
+      placeholder: "e.g. Debian 13 / Fedora 41 / Arch (rolling) / Ubuntu 24.10"
+    validations:
+      required: true
+
+  - type: input
+    id: desktop
+    attributes:
+      label: Desktop environment and display server
+      placeholder: "e.g. KDE Plasma 6.2 / Wayland — GNOME 47 / X11"
+
+  - type: input
+    id: kernel
+    attributes:
+      label: Kernel version
+      description: "Output of `uname -r`"
+      placeholder: "e.g. 6.12.96+deb13-amd64"
+
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      description: "Output of `python3 --version`"
+      placeholder: "e.g. 3.13.2"
+
+  - type: checkboxes
+    id: features_tested
+    attributes:
+      label: Features tested
+      description: "Check what you physically verified on your hardware."
+      options:
+        - label: "Installation completed without errors"
+        - label: "Sensors show valid readings in General Panel"
+        - label: "LCD displays sensor data (temperature/load)"
+        - label: "LCD displays custom image"
+        - label: "LCD displays animated GIF"
+        - label: "Brightness control works"
+        - label: "Rotation control works"
+        - label: "Content persists after closing Algor"
+        - label: "Content persists after full reboot"
+        - label: "Autonomous startup without iCUE"
+        - label: "Resume after suspend works"
+        - label: "Boots correctly after full USB power loss (unplug/replug)"
+        - label: "Fan/pump identification wizard completes"
+        - label: "RPM alerts fire correctly"
+        - label: "CSV export produces valid data"
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics output
+      description: |
+        Paste the output of `python scripts/diagnostics.py`.
+        Review it before posting — it does not include serial numbers or images,
+        but check that you are comfortable sharing its contents.
+      render: text
+
   - type: textarea
     id: notes
     attributes:
-      label: Observaciones y errores
+      label: Additional notes
+      description: |
+        Anything else: features that didn't work, error messages, workarounds,
+        sensor chips detected, or differences from the reference setup.
+        Do NOT attach full USB dumps, serial numbers, personal media or
+        unreviewed logs.

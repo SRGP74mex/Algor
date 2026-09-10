@@ -1,0 +1,37 @@
+name: "Feature request"
+description: "Suggest a new feature or improvement."
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ideas are welcome! Describe the problem your suggestion would solve.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: "Describe the situation or limitation you are running into."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: "How would you like it to work? Be as specific as you can."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: "Have you tried any workaround or seen this solved elsewhere?"
+
+  - type: input
+    id: hardware
+    attributes:
+      label: Related hardware (if applicable)
+      placeholder: "e.g. specific cooler model, sensor chip, LCD variant"

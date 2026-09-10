@@ -1,0 +1,79 @@
+name: "Bug report"
+description: "Something is not working as expected."
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please include enough detail to reproduce the issue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: "Describe the problem. What did you expect vs. what actually occurred?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: "Numbered steps to trigger the issue."
+      placeholder: |
+        1. Open Algor
+        2. Go to LCD Cap Screen
+        3. Click Start LCD
+        4. ...
+    validations:
+      required: true
+
+  - type: input
+    id: distro
+    attributes:
+      label: Distribution, desktop and display server
+      placeholder: "e.g. Debian 13 / KDE Plasma 6.2 / Wayland"
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "e.g. 3.13.2"
+
+  - type: input
+    id: hardware
+    attributes:
+      label: Relevant hardware
+      description: "Motherboard, CPU, GPU or cooler model if related to the issue."
+      placeholder: "e.g. ASUS X670E, Ryzen 9 7950X, Nautilus 360 RS"
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error output or logs
+      description: |
+        Paste terminal output, tracebacks or relevant log excerpts.
+        Review before posting — do not include serial numbers, personal
+        media paths or unreviewed full logs.
+      render: text
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics output (optional)
+      description: "Output of `python scripts/diagnostics.py` if relevant."
+      render: text
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: "I ran `python scripts/run_tests.py` and it passes on my setup"
+        - label: "I checked existing issues for duplicates"
+        - label: "I reviewed the log/diagnostics output before pasting"
+        - label: "The LCD is available to Linux (not assigned to a VM)"
+        - label: "Pump and fans remained BIOS-controlled during this test"
