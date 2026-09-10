@@ -190,8 +190,10 @@ class DashboardView(QWidget):
             accent = GAUGE_ACCENT_CYCLE[i % len(GAUGE_ACCENT_CYCLE)]
             gauge = CircularGauge(
                 title=sensor.label, unit=sensor.unit,
-                min_val=sensor.min_val, max_val=sensor.max_val, accent_color=accent
+                min_val=sensor.min_val, max_val=sensor.max_val, accent_color=accent,
+                sensor_id=sensor_id,
             )
+            gauge.reordered.connect(self._on_gauge_reordered)
             self.gauge_widgets[sensor_id] = gauge
 
         self._relayout_grid()
@@ -226,6 +228,23 @@ class DashboardView(QWidget):
             self.gauges_layout.addWidget(gauge, row, column)
             gauge.show()
             col += 1
+
+    def _on_gauge_reordered(self, dragged_id: str, target_id: str) -> None:
+        """Mueve `dragged_id` a la posición de `target_id` tras un arrastre en el
+        Panel General y persiste el nuevo orden en `dashboard_sensors`.
+
+        Se reordena la lista lógica de sensores (no coordenadas x,y) porque
+        `_relayout_grid` recalcula fila/columna a partir de ella y del número de
+        columnas actual, que cambia con el ancho de la ventana.
+        """
+        if dragged_id not in self.active_sensor_ids or target_id not in self.active_sensor_ids:
+            return
+        new_ids = list(self.active_sensor_ids)
+        new_ids.remove(dragged_id)
+        new_ids.insert(new_ids.index(target_id), dragged_id)
+        self.active_sensor_ids = new_ids
+        config.set("dashboard_sensors", new_ids)
+        self._relayout_grid()
 
     def _open_customize_dialog(self) -> None:
         dialog = CustomizeDashboardDialog(self.active_sensor_ids, self._last_data, parent=self)

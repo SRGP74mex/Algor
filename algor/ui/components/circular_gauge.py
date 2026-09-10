@@ -1,7 +1,15 @@
 import math
-from PyQt6.QtCore import Qt, QRectF, QPropertyAnimation, pyqtProperty
-from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QFont, QLinearGradient, QConicalGradient
+from PyQt6.QtCore import Qt, QRectF, QPropertyAnimation, pyqtProperty, pyqtSignal, QMimeData, QPoint
+from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QFont, QLinearGradient, QConicalGradient, QDrag
 from PyQt6.QtWidgets import QWidget
+
+# Identifica el mime type interno usado para arrastrar un gauge sobre otro y
+# reordenarlos dentro del grid del Panel General (ver DashboardView).
+GAUGE_DRAG_MIME = "application/x-algor-sensor-id"
+
+# Distancia mínima en píxeles antes de interpretar un click+arrastre como un
+# drag real, para no disparar un QDrag con un simple click.
+DRAG_START_THRESHOLD = 12
 
 
 class CircularGauge(QWidget):
@@ -9,25 +17,78 @@ class CircularGauge(QWidget):
     Medidor circular animado de alta definición con estética Dark/Cyber Neon.
     """
 
+    # Emitida al soltar OTRO gauge encima de este: (sensor_id_arrastrado, sensor_id_de_este_gauge).
+    reordered = pyqtSignal(str, str)
+
     def __init__(self, title: str = "TEMP", unit: str = "°C", min_val: float = 0, max_val: float = 100,
-                 accent_color: str = "#00f0ff", parent=None):
+                 accent_color: str = "#00f0ff", sensor_id: str = "", parent=None):
         super().__init__(parent)
         self.title = title
         self.unit = unit
         self.min_val = min_val
         self.max_val = max_val
         self.accent_color = QColor(accent_color)
-        
+        self.sensor_id = sensor_id
+
         self._available = False
         self._current_value = min_val
         self._displayed_value = min_val
-        
+        self._drag_start_pos: QPoint | None = None
+
         # Animación de valor suave
         self._anim = QPropertyAnimation(self, b"animated_value")
         self._anim.setDuration(400)
-        
+
         self.setMinimumSize(160, 160)
         self.setMaximumSize(220, 220)
+
+        # Permite arrastrar este gauge para reordenarlo, y soltar otro gauge
+        # encima de este para intercambiar sus posiciones en el Panel General.
+        self.setAcceptDrops(True)
+        self.setCursor(Qt.CursorShape.OpenHandCursor)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self._drag_start_pos = event.position().toPoint()
+        super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        if (self._drag_start_pos is not None
+                and event.buttons() & Qt.MouseButton.LeftButton
+                and (event.position().toPoint() - self._drag_start_pos).manhattanLength() >= DRAG_START_THRESHOLD):
+            self._start_drag()
+        super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        self._drag_start_pos = None
+        super().mouseReleaseEvent(event)
+
+    def _start_drag(self) -> None:
+        self._drag_start_pos = None
+        if not self.sensor_id:
+            return
+        mime = QMimeData()
+        mime.setData(GAUGE_DRAG_MIME, self.sensor_id.encode("utf-8"))
+        drag = QDrag(self)
+        drag.setMimeData(mime)
+        drag.setPixmap(self.grab())
+        drag.setHotSpot(self.rect().center())
+        self.setCursor(Qt.CursorShape.ClosedHandCursor)
+        drag.exec(Qt.DropAction.MoveAction)
+        self.setCursor(Qt.CursorShape.OpenHandCursor)
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat(GAUGE_DRAG_MIME):
+            event.acceptProposedAction()
+
+    def dropEvent(self, event):
+        mime = event.mimeData()
+        if not mime.hasFormat(GAUGE_DRAG_MIME):
+            return
+        dragged_id = bytes(mime.data(GAUGE_DRAG_MIME)).decode("utf-8")
+        if dragged_id and dragged_id != self.sensor_id:
+            self.reordered.emit(dragged_id, self.sensor_id)
+        event.acceptProposedAction()
 
     def get_animated_value(self) -> float:
         return self._displayed_value

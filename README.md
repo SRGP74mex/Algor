@@ -25,6 +25,8 @@ se limita al equipo indicado abajo; detectar un chip no equivale a validar todos
 
 - Temperatura y carga de CPU, telemetría GPU y sensores disponibles en Linux.
 - Panel personalizable, ventana y preferencias persistentes, exportación CSV.
+- Medidores del Panel General reordenables arrastrando con el mouse; el orden
+  elegido se recuerda entre sesiones.
 - LCD: temperatura/carga, imágenes, GIF, color, brillo y rotación.
 - Importación y optimización de archivos propios; guardado en memoria del LCD.
 - Alertas de temperatura, pérdida de lecturas y errores LCD, con historial.
