@@ -1,321 +1,480 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Algor — Linux GUI for the Corsair Nautilus LCD Cap</title>
-<meta name="description" content="Algor: aplicación de escritorio para Linux, monitoreo de sensores y personalización del Corsair Nautilus LCD Cap. Proyecto independiente, código abierto.">
-<link rel="icon" href="assets/favicon.png">
-<style>
-  :root{
-    --bg:#0d1117; --bg-elev:#151b23; --border:#2a323d;
-    --text:#e6edf3; --text-dim:#9aa7b4;
-    --accent:#5ec8f8; --accent-dim:#3a7f9c;
-    --warn:#f0a63a; --info:#5ec8f8;
-    --radius:12px;
-    color-scheme: dark light;
-  }
-  @media (prefers-color-scheme: light){
-    :root{
-      --bg:#f6f8fa; --bg-elev:#ffffff; --border:#d0d7de;
-      --text:#1f2328; --text-dim:#57606a;
-      --accent:#0969da; --accent-dim:#0550ae;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Algor — Corsair Nautilus LCD Cap for Linux</title>
+  <meta name="description" content="Algor: monitoreo de sensores y personalización del Corsair Nautilus LCD Cap, nativo para Linux. Proyecto independiente, código abierto." />
+
+  <!-- Open Graph / Meta -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Algor — Corsair Nautilus LCD Cap for Linux" />
+  <meta property="og:description" content="Sensor telemetry, LCD customization and fan curve simulation for the Corsair Nautilus LCD Cap, native on Linux." />
+  <meta property="og:image" content="screenshots/panel-general.png" />
+  <meta property="og:url" content="https://srgp74mex.github.io/Algor/" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="icon" href="assets/favicon.png">
+
+  <style>
+    :root {
+      --bg-base: #080d16;
+      --bg-surface: rgba(255, 255, 255, 0.04);
+      --bg-surface-hover: rgba(255, 255, 255, 0.08);
+      --border-glass: rgba(255, 255, 255, 0.12);
+      --border-glass-hover: rgba(255, 255, 255, 0.25);
+      --accent: #22d3ee;
+      --accent-blue: #38bdf8;
+      --accent-warn: #f0a63a;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
     }
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0; background:var(--bg); color:var(--text);
-    font:16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  }
-  img{max-width:100%; display:block}
-  a{color:var(--accent)}
-  .wrap{max-width:960px; margin:0 auto; padding:0 24px}
 
-  header.top{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 24px; border-bottom:1px solid var(--border);
-  }
-  .brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:1.1rem}
-  .brand img{width:28px; height:28px}
-  .top-actions{display:flex; align-items:center; gap:10px}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .lang-toggle{
-    display:flex; border:1px solid var(--border); border-radius:8px; overflow:hidden;
-  }
-  .lang-toggle button{
-    background:none; border:none; color:var(--text-dim); padding:6px 12px;
-    font-size:.85rem; cursor:pointer; font-weight:600;
-  }
-  .lang-toggle button.active{background:var(--accent); color:#04121a}
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      overflow-x: hidden;
+      line-height: 1.6;
+      background-image:
+        radial-gradient(circle at 20% 15%, rgba(34, 211, 238, 0.15), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(240, 166, 58, 0.10), transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(56, 189, 248, 0.10), transparent 50%);
+      background-attachment: fixed;
+    }
 
-  .btn{
-    display:inline-flex; align-items:center; gap:6px;
-    padding:9px 16px; border-radius:8px; text-decoration:none;
-    font-weight:600; font-size:.9rem; border:1px solid var(--border);
-  }
-  .btn-primary{background:var(--accent); color:#04121a; border-color:var(--accent)}
-  .btn-ghost{color:var(--text)}
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
 
-  .hero{padding:64px 0 32px; text-align:center}
-  .hero .logo{width:88px; height:88px; margin:0 auto 20px}
-  .hero h1{font-size:2.4rem; margin:0 0 12px}
-  .hero p.tagline{font-size:1.15rem; color:var(--text-dim); max-width:620px; margin:0 auto 20px}
-  .badge{
-    display:inline-block; font-size:.78rem; font-weight:700; letter-spacing:.02em;
-    padding:5px 12px; border-radius:999px; margin-bottom:22px;
-    background:rgba(240,166,58,.15); color:var(--warn); border:1px solid rgba(240,166,58,.35);
-  }
-  .cta-row{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:8px}
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
-  .hero-shot{margin-top:44px; border-radius:var(--radius); overflow:hidden; border:1px solid var(--border)}
+    /* Header / Nav */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      background: rgba(8, 13, 22, 0.75);
+      border-bottom: 1px solid var(--border-glass);
+      padding: 16px 0;
+    }
+    .nav-wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; }
+    .brand img { width: 30px; height: 30px; border-radius: 8px; filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.5)); }
+    .brand-title { background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-  section{padding:56px 0; border-top:1px solid var(--border)}
-  h2{font-size:1.5rem; margin:0 0 28px; text-align:center}
+    .nav-right { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .nav-links { display: flex; gap: 22px; align-items: center; font-size: 0.95rem; font-weight: 500; color: var(--text-muted); }
+    .nav-links a:hover { color: var(--text-main); }
 
-  .features{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:18px}
-  .feature{
-    background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius);
-    padding:18px 20px;
-  }
-  .feature h3{margin:0 0 6px; font-size:1rem}
-  .feature p{margin:0; color:var(--text-dim); font-size:.92rem}
+    .lang-toggle { display: inline-flex; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); padding: 3px; border-radius: 9999px; }
+    .lang-toggle button { padding: 5px 13px; border-radius: 9999px; border: none; background: transparent; color: var(--text-muted); font-weight: 700; font-size: 0.78rem; cursor: pointer; }
+    .lang-toggle button.active { background: rgba(34, 211, 238, 0.2); color: var(--accent); }
 
-  .safety{
-    background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius);
-    padding:20px 22px; font-size:.92rem; color:var(--text-dim); margin-top:28px;
-  }
-  .safety strong{color:var(--text)}
+    .btn-github {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-glass);
+      padding: 8px 16px; border-radius: 9999px; font-size: 0.9rem; font-weight: 600; color: #fff;
+      backdrop-filter: blur(10px); transition: all .25s ease;
+    }
+    .btn-github:hover { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.35); transform: translateY(-1px); }
 
-  .gallery{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:16px}
-  .gallery figure{margin:0; background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden}
-  .gallery img{width:100%}
-  .gallery figcaption{padding:10px 14px; font-size:.82rem; color:var(--text-dim)}
+    /* Hero */
+    .hero { padding: 80px 0 60px; text-align: center; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(240, 166, 58, 0.1); border: 1px solid rgba(240, 166, 58, 0.35);
+      padding: 6px 16px; border-radius: 9999px; font-size: 0.85rem; font-weight: 600; color: var(--accent-warn);
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #ffffff 30%, #94a3b8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p.tagline { font-size: clamp(1.05rem, 2vw, 1.25rem); color: var(--text-muted); max-width: 680px; margin: 0 auto 36px; }
 
-  .alert-row{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px; margin-top:16px}
+    .hero-ctas { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 40px; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, var(--accent), #0891b2);
+      color: #04141a; padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 1rem;
+      box-shadow: 0 8px 25px rgba(34, 211, 238, 0.3); transition: all .25s ease;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(34, 211, 238, 0.45); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #fff;
+      padding: 14px 28px; border-radius: 12px; font-weight: 600; font-size: 1rem;
+      backdrop-filter: blur(12px); transition: all .25s ease;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); transform: translateY(-2px); }
 
-  .compat-box{
-    background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius);
-    padding:24px 26px;
-  }
-  .compat-box dl{display:grid; grid-template-columns:auto 1fr; gap:8px 16px; margin:0 0 16px; font-size:.92rem}
-  .compat-box dt{color:var(--text-dim)}
-  .compat-box dd{margin:0}
+    .terminal-box {
+      max-width: 620px; margin: 0 auto 56px;
+      background: rgba(15, 23, 42, 0.85); border: 1px solid var(--border-glass); border-radius: 14px;
+      padding: 16px 22px; display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 20px 40px rgba(0,0,0,.4); backdrop-filter: blur(16px);
+    }
+    .terminal-code { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--accent); display: flex; gap: 10px; overflow-x: auto; white-space: nowrap; }
+    .terminal-code span.prompt { color: var(--text-dim); user-select: none; }
+    .btn-copy {
+      background: rgba(255,255,255,0.08); border: 1px solid var(--border-glass); color: var(--text-muted);
+      border-radius: 8px; padding: 6px 12px; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-left: 14px;
+    }
+    .btn-copy:hover { background: rgba(255,255,255,0.2); color: #fff; }
 
-  pre{
-    background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius);
-    padding:16px 18px; overflow-x:auto; font-size:.85rem; line-height:1.5;
-  }
-  code{font-family:ui-monospace, SFMono-Regular, Consolas, monospace}
+    .showcase-container { position: relative; margin: 0 auto 90px; max-width: 1000px; }
+    .showcase-frame {
+      position: relative; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 30px 80px rgba(0,0,0,.7), 0 0 100px rgba(34, 211, 238, 0.12); background: #0d1520;
+    }
+    .showcase-frame img { width: 100%; height: auto; }
+    .toggle-bar { display: inline-flex; background: rgba(15,23,42,0.8); border: 1px solid var(--border-glass); padding: 4px; border-radius: 9999px; margin-top: 24px; backdrop-filter: blur(12px); }
+    .toggle-btn { padding: 8px 20px; border-radius: 9999px; border: none; background: transparent; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+    .toggle-btn.active { background: rgba(34, 211, 238, 0.18); color: var(--accent); }
 
-  footer{padding:40px 0 60px; text-align:center; color:var(--text-dim); font-size:.85rem}
-  footer a{color:var(--text-dim); text-decoration:underline}
-  footer .links{margin-bottom:10px}
-  footer .links a{margin:0 8px}
+    /* Section titles */
+    .section-title { text-align: center; margin-bottom: 46px; }
+    .section-title h2 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+    .section-title p { color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto; }
 
-  [data-lang]{display:none}
-  html[data-active="es"] [data-lang="es"]{display:revert}
-  html[data-active="en"] [data-lang="en"]{display:revert}
-  html[data-active="es"] span[data-lang="es"],
-  html[data-active="en"] span[data-lang="en"]{display:inline}
-</style>
+    section.container { padding-top: 10px; }
+
+    /* Bento */
+    .bento-features { display: grid; grid-template-columns: repeat(12, 1fr); gap: 22px; margin-bottom: 90px; }
+    .glass-card {
+      background: var(--bg-surface); border: 1px solid var(--border-glass); border-radius: 20px; padding: 30px;
+      backdrop-filter: blur(16px); transition: all .3s cubic-bezier(.16,1,.3,1);
+      display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; position: relative;
+    }
+    .glass-card:hover { background: var(--bg-surface-hover); border-color: var(--border-glass-hover); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,.4); }
+    .card-icon { font-size: 1.9rem; margin-bottom: 14px; display: inline-block; }
+    .card-content h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: #fff; }
+    .card-content p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.55; }
+    .col-span-8 { grid-column: span 8; }
+    .col-span-4 { grid-column: span 4; }
+    .col-span-6 { grid-column: span 6; }
+    .col-span-12 { grid-column: span 12; }
+    .card-preview-img { width: 100%; border-radius: 12px; margin-top: 18px; border: 1px solid rgba(255,255,255,0.1); }
+
+    /* Safety callout */
+    .safety-box {
+      background: linear-gradient(180deg, rgba(240,166,58,0.07) 0%, rgba(15,23,42,0.6) 100%);
+      border: 1px solid rgba(240,166,58,0.3); border-radius: 20px; padding: 32px 34px; margin-bottom: 90px;
+    }
+    .safety-box h3 { font-size: 1.2rem; margin-bottom: 10px; color: var(--accent-warn); }
+    .safety-box p { color: var(--text-muted); font-size: 0.95rem; }
+    .safety-box a { color: var(--accent-warn); text-decoration: underline; }
+
+    /* RPM alert trio */
+    .alert-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 18px; margin-bottom: 90px; }
+    .alert-row .glass-card { padding: 0; }
+    .alert-row img { border-radius: 20px; }
+
+    /* Compatibility */
+    .compat-box { padding: 34px 36px; margin-bottom: 90px; }
+    .compat-box dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 20px; margin: 0 0 20px; font-size: 0.95rem; }
+    .compat-box dt { color: var(--text-dim); }
+    .compat-box dd { margin: 0; font-weight: 600; }
+    .compat-box p { color: var(--text-muted); font-size: 0.92rem; margin-top: 6px; }
+
+    /* Install */
+    .install-section {
+      background: linear-gradient(180deg, rgba(15,23,42,0.8) 0%, rgba(8,13,22,0.95) 100%);
+      border: 1px solid var(--border-glass); border-radius: 24px; padding: 48px 40px; margin-bottom: 90px;
+      backdrop-filter: blur(20px); text-align: center;
+    }
+    .install-section h2 { font-size: 2rem; font-weight: 800; }
+    .install-section > p { color: var(--text-muted); margin-top: 8px; }
+    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 36px; text-align: left; }
+    .step-item { background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 14px; padding: 22px; }
+    .step-num { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: rgba(34,211,238,0.15); color: var(--accent); font-weight: 700; border-radius: 8px; margin-bottom: 12px; }
+    .step-item h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+    .step-item p { font-size: 0.88rem; color: var(--text-muted); }
+    .step-item code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--accent); }
+
+    pre { background: rgba(15,23,42,0.85); border: 1px solid var(--border-glass); border-radius: 14px; padding: 18px 20px; overflow-x: auto; font-size: 0.82rem; line-height: 1.6; text-align: left; margin-top: 30px; }
+    code { font-family: 'JetBrains Mono', monospace; }
+
+    footer { border-top: 1px solid var(--border-glass); padding: 46px 0; text-align: center; color: var(--text-dim); font-size: 0.92rem; }
+    footer p { margin-bottom: 10px; }
+    footer a { color: var(--text-muted); }
+    footer a:hover { color: var(--accent); }
+
+    [data-lang] { display: none; }
+    html[data-active="es"] [data-lang="es"] { display: revert; }
+    html[data-active="en"] [data-lang="en"] { display: revert; }
+
+    @media (max-width: 900px) {
+      .col-span-8, .col-span-4, .col-span-6 { grid-column: span 12; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
 </head>
 <body>
 
-<header class="top">
-  <div class="brand">
-    <img src="assets/favicon.png" alt="">
-    <span>Algor</span>
-  </div>
-  <div class="top-actions">
-    <div class="lang-toggle" role="group" aria-label="Language">
-      <button type="button" data-set-lang="es" id="btn-es">ES</button>
-      <button type="button" data-set-lang="en" id="btn-en">EN</button>
-    </div>
-    <a class="btn btn-ghost" href="https://github.com/SRGP74mex/Algor">GitHub</a>
-  </div>
-</header>
-
-<main class="wrap">
-
-  <section class="hero" style="border-top:none">
-    <img class="logo" src="assets/algor-logo-512.png" alt="Algor">
-    <div data-lang="es">
-      <span class="badge">Versión preliminar para validación comunitaria</span>
-      <h1>Algor</h1>
-      <p class="tagline">Monitoreo de sensores y personalización del Corsair Nautilus LCD Cap, para Linux. Proyecto independiente, sin afiliación con Corsair.</p>
-    </div>
-    <div data-lang="en">
-      <span class="badge">Early release for community validation</span>
-      <h1>Algor</h1>
-      <p class="tagline">Sensor monitoring and customization for the Corsair Nautilus LCD Cap, on Linux. Independent project, not affiliated with Corsair.</p>
-    </div>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="https://github.com/SRGP74mex/Algor">
-        <span data-lang="es">Ver en GitHub</span><span data-lang="en">View on GitHub</span>
+  <header>
+    <div class="container nav-wrap">
+      <a href="#" class="brand">
+        <img src="assets/favicon.png" alt="Algor">
+        <span class="brand-title">Algor</span>
       </a>
-      <a class="btn btn-ghost" href="#instalar">
-        <span data-lang="es">Cómo instalar</span><span data-lang="en">How to install</span>
-      </a>
+      <div class="nav-right">
+        <div class="nav-links">
+          <a href="#funciones"><span data-lang="es">Funciones</span><span data-lang="en">Features</span></a>
+          <a href="#alertas"><span data-lang="es">Capturas</span><span data-lang="en">Screenshots</span></a>
+          <a href="#compatibilidad"><span data-lang="es">Compatibilidad</span><span data-lang="en">Compatibility</span></a>
+          <a href="#instalar"><span data-lang="es">Instalación</span><span data-lang="en">Install</span></a>
+        </div>
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" data-set-lang="es" id="btn-es">ES</button>
+          <button type="button" data-set-lang="en" id="btn-en">EN</button>
+        </div>
+        <a href="https://github.com/SRGP74mex/Algor" target="_blank" class="btn-github">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
     </div>
-    <div class="hero-shot">
-      <img src="screenshots/panel-general.png" alt="Algor — Panel General">
-    </div>
-  </section>
+  </header>
 
-  <section id="funciones">
-    <h2><span data-lang="es">Funciones y alcance</span><span data-lang="en">Features and scope</span></h2>
-    <div class="features">
-      <div class="feature">
-        <div data-lang="es"><h3>Sensores en vivo</h3><p>Temperatura y carga de CPU, telemetría GPU y sensores disponibles en Linux.</p></div>
-        <div data-lang="en"><h3>Live sensors</h3><p>CPU temperature and load, GPU telemetry and all available Linux sensors.</p></div>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">
+        <span data-lang="es">⚠️ Versión preliminar para validación comunitaria</span>
+        <span data-lang="en">⚠️ Early release for community validation</span>
       </div>
-      <div class="feature">
-        <div data-lang="es"><h3>Panel personalizable</h3><p>Medidores reordenables arrastrando con el mouse; el orden se recuerda entre sesiones.</p></div>
-        <div data-lang="en"><h3>Customizable panel</h3><p>General Panel gauges can be reordered by dragging; the layout is remembered across sessions.</p></div>
-      </div>
-      <div class="feature">
-        <div data-lang="es"><h3>Pantalla LCD</h3><p>Temperatura/carga, imágenes, GIF, color, brillo y rotación — con memoria propia guardada en el LCD.</p></div>
-        <div data-lang="en"><h3>LCD screen</h3><p>Temperature/load display, images, GIF, color, brightness and rotation — saved to LCD onboard memory.</p></div>
-      </div>
-      <div class="feature">
-        <div data-lang="es"><h3>Alertas</h3><p>Temperatura, pérdida de lecturas, RPM bajas/recuperación y errores LCD, con historial y notificaciones nativas.</p></div>
-        <div data-lang="en"><h3>Alerts</h3><p>Temperature, reading loss, low RPM/recovery and LCD errors, with history and native notifications.</p></div>
-      </div>
-      <div class="feature">
-        <div data-lang="es"><h3>Asistente de identificación</h3><p>Identifica bomba y ventiladores canal por canal para habilitar alertas RPM con confianza.</p></div>
-        <div data-lang="en"><h3>Identification wizard</h3><p>Identifies pump and fans channel by channel so you can enable RPM alerts with confidence.</p></div>
-      </div>
-      <div class="feature">
-        <div data-lang="es"><h3>Registro y exportación</h3><p>Exportación CSV, preferencias e historial de eventos persistentes.</p></div>
-        <div data-lang="en"><h3>Logging and export</h3><p>CSV export, persistent preferences and event history.</p></div>
-      </div>
-    </div>
+      <h1>Algor</h1>
+      <p class="tagline" data-lang="es">Monitoreo de sensores, telemetría en vivo y personalización total del Corsair Nautilus LCD Cap — nativo para Linux. Proyecto independiente, sin afiliación con Corsair.</p>
+      <p class="tagline" data-lang="en">Sensor monitoring, live telemetry and full customization of the Corsair Nautilus LCD Cap — native on Linux. Independent project, not affiliated with Corsair.</p>
 
-    <div class="safety">
-      <div data-lang="es">
-        <strong>Bomba y ventiladores permanecen controlados por BIOS por defecto.</strong>
-        Las curvas de la app son una simulación: no escriben PWM salvo que actives explícitamente
-        el modo opt-in <strong>Reactivo</strong>, sobre un canal que hayas probado y confirmado vos mismo
-        — la bomba nunca es candidata, en ningún modo. No cambia voltajes. No existe modo Cero RPM.
-        Ver <a href="https://github.com/SRGP74mex/Algor/blob/main/docs/PWM_REAL_CONTROL.md">docs/PWM_REAL_CONTROL.md</a>.
+      <div class="hero-ctas">
+        <a href="#instalar" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span data-lang="es">Cómo instalar</span><span data-lang="en">Quick Install</span>
+        </a>
+        <a href="https://github.com/SRGP74mex/Algor" target="_blank" class="btn-secondary">
+          <span data-lang="es">Ver en GitHub ⭐</span><span data-lang="en">Star on GitHub ⭐</span>
+        </a>
       </div>
-      <div data-lang="en">
-        <strong>Pump and fans remain under BIOS control by default.</strong>
-        The app's fan curves are a simulation: they do not write PWM unless you explicitly enable the
-        opt-in <strong>Reactive</strong> mode, on a channel you have tested and confirmed yourself
-        — the pump is never a candidate, in any mode. No voltage changes. No Zero RPM mode.
-        See <a href="https://github.com/SRGP74mex/Algor/blob/main/docs/PWM_REAL_CONTROL.md">docs/PWM_REAL_CONTROL.md</a>.
+
+      <div class="terminal-box">
+        <div class="terminal-code">
+          <span class="prompt">$</span>
+          <span id="clone-cmd">git clone https://github.com/SRGP74mex/Algor.git && cd Algor</span>
+        </div>
+        <button class="btn-copy" onclick="copyCommand()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span id="copy-text">Copy</span>
+        </button>
+      </div>
+
+      <div class="showcase-container">
+        <div class="showcase-frame">
+          <img id="preview-img" src="screenshots/panel-general.png" alt="Algor screenshot">
+        </div>
+        <div class="toggle-bar">
+          <button class="toggle-btn active" onclick="switchShot('panel', this)">
+            <span data-lang="es">📊 Panel General</span><span data-lang="en">📊 General Panel</span>
+          </button>
+          <button class="toggle-btn" onclick="switchShot('lcd', this)">
+            <span data-lang="es">🖥️ Pantalla LCD</span><span data-lang="en">🖥️ LCD Screen</span>
+          </button>
+        </div>
       </div>
     </div>
   </section>
 
-  <section id="capturas">
-    <h2><span data-lang="es">Capturas de pantalla</span><span data-lang="en">Screenshots</span></h2>
-    <div class="gallery">
-      <figure>
-        <img src="screenshots/simulacion-curvas.png" alt="Fan curve simulation">
-        <figcaption><span data-lang="es">Simulación de curvas de ventilador</span><span data-lang="en">Fan curve simulation</span></figcaption>
-      </figure>
-      <figure>
-        <img src="screenshots/pantalla-lcd-cap.png" alt="LCD Cap customization">
-        <figcaption><span data-lang="es">Personalización de la pantalla LCD Cap</span><span data-lang="en">LCD Cap customization</span></figcaption>
-      </figure>
-      <figure>
-        <img src="screenshots/identificar-ventiladores.png" alt="Pump and fan identification wizard">
-        <figcaption><span data-lang="es">Asistente para identificar bomba y ventiladores</span><span data-lang="en">Pump and fan identification wizard</span></figcaption>
-      </figure>
-      <figure>
-        <img src="screenshots/ajustes-alertas-permisos.png" alt="Settings: alerts, USB permissions and opt-in PWM control">
-        <figcaption><span data-lang="es">Ajustes: alertas, permisos USB y control PWM opt-in</span><span data-lang="en">Settings: alerts, USB permissions and opt-in PWM control</span></figcaption>
-      </figure>
+  <section id="funciones" class="container">
+    <div class="section-title">
+      <h2><span data-lang="es">Control total, sin iCUE</span><span data-lang="en">Full control, no iCUE needed</span></h2>
+      <p data-lang="es">Sensores nativos de Linux, LCD personalizable y curvas simuladas — con la bomba siempre bajo control de la BIOS.</p>
+      <p data-lang="en">Native Linux sensors, a customizable LCD and simulated fan curves — with the pump always under BIOS control.</p>
     </div>
 
+    <div class="bento-features">
+      <div class="glass-card col-span-8">
+        <div class="card-content">
+          <span class="card-icon">📈</span>
+          <div data-lang="es"><h3>Simulador de curvas de ventilador</h3><p>Perfiles Silencioso / Equilibrado / Extremo y un editor de curvas propio, con arrastrar y soltar. Solo escribe PWM real si activás el modo opt-in Reactivo sobre un canal confirmado por vos.</p></div>
+          <div data-lang="en"><h3>Fan curve simulator</h3><p>Silent / Balanced / Extreme presets and a drag-and-drop custom curve editor. Only writes real PWM if you explicitly enable the opt-in Reactive mode on a channel you've confirmed.</p></div>
+        </div>
+        <img class="card-preview-img" src="screenshots/simulacion-curvas.png" alt="Fan curve simulator">
+      </div>
+
+      <div class="glass-card col-span-4">
+        <div class="card-content">
+          <span class="card-icon">🖥️</span>
+          <div data-lang="es"><h3>Pantalla LCD Cap</h3><p>Temperatura/carga, imágenes, GIF, color, brillo y rotación — guardado en la memoria propia del LCD.</p></div>
+          <div data-lang="en"><h3>LCD Cap screen</h3><p>Temperature/load, images, GIF, color, brightness and rotation — saved to the LCD's onboard memory.</p></div>
+        </div>
+        <img class="card-preview-img" src="screenshots/pantalla-lcd-cap.png" alt="LCD Cap customization">
+      </div>
+
+      <div class="glass-card col-span-4">
+        <div class="card-content">
+          <span class="card-icon">🧭</span>
+          <div data-lang="es"><h3>Asistente de identificación</h3><p>Identifica bomba y ventiladores canal por canal antes de habilitar alertas RPM.</p></div>
+          <div data-lang="en"><h3>Identification wizard</h3><p>Identifies pump and fans channel by channel before enabling RPM alerts.</p></div>
+        </div>
+        <img class="card-preview-img" src="screenshots/identificar-ventiladores.png" alt="Pump and fan identification wizard">
+      </div>
+
+      <div class="glass-card col-span-4">
+        <div class="card-content">
+          <span class="card-icon">🔔</span>
+          <div data-lang="es"><h3>Alertas y ajustes</h3><p>Notificaciones nativas de temperatura, RPM bajas/recuperación y errores LCD, con historial y umbrales por canal.</p></div>
+          <div data-lang="en"><h3>Alerts and settings</h3><p>Native notifications for temperature, low RPM/recovery and LCD errors, with history and per-channel thresholds.</p></div>
+        </div>
+        <img class="card-preview-img" src="screenshots/ajustes-alertas-permisos.png" alt="Settings: alerts, USB permissions and opt-in PWM control">
+      </div>
+
+      <div class="glass-card col-span-4">
+        <div class="card-content">
+          <span class="card-icon">🧩</span>
+          <div data-lang="es"><h3>Panel y registro</h3><p>Medidores reordenables arrastrando con el mouse, exportación CSV e historial de eventos persistente.</p></div>
+          <div data-lang="en"><h3>Panel and logging</h3><p>Gauges reorderable by drag-and-drop, CSV export and a persistent event history.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="safety-box">
+      <h3>⚠️ <span data-lang="es">Seguridad primero</span><span data-lang="en">Safety first</span></h3>
+      <div data-lang="es"><p><strong>Bomba y ventiladores permanecen controlados por BIOS por defecto.</strong> Las curvas de la app son una simulación: no escriben PWM salvo que actives explícitamente el modo opt-in Reactivo sobre un canal probado y confirmado por vos — la bomba nunca es candidata, en ningún modo. No cambia voltajes. No existe modo Cero RPM. Ver <a href="https://github.com/SRGP74mex/Algor/blob/main/docs/PWM_REAL_CONTROL.md" target="_blank">docs/PWM_REAL_CONTROL.md</a>.</p></div>
+      <div data-lang="en"><p><strong>Pump and fans remain under BIOS control by default.</strong> The app's fan curves are a simulation: they do not write PWM unless you explicitly enable the opt-in Reactive mode on a channel you have tested and confirmed yourself — the pump is never a candidate, in any mode. No voltage changes. No Zero RPM mode. See <a href="https://github.com/SRGP74mex/Algor/blob/main/docs/PWM_REAL_CONTROL.md" target="_blank">docs/PWM_REAL_CONTROL.md</a>.</p></div>
+    </div>
+  </section>
+
+  <section id="alertas" class="container">
+    <div class="section-title">
+      <h2><span data-lang="es">Alertas RPM en acción</span><span data-lang="en">RPM alerts in action</span></h2>
+      <p data-lang="es">Notificaciones nativas del sistema cuando un canal cae por debajo del umbral configurado, y cuando se recupera.</p>
+      <p data-lang="en">Native system notifications when a channel drops below its configured threshold, and when it recovers.</p>
+    </div>
     <div class="alert-row">
-      <figure style="margin:0; background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden">
-        <img src="screenshots/alerta-rpm-bajas.png" alt="Low RPM alert">
-      </figure>
-      <figure style="margin:0; background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden">
-        <img src="screenshots/alertas-rpm-recuperacion.png" alt="Alerts: low RPM and recovery">
-      </figure>
-      <figure style="margin:0; background:var(--bg-elev); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden">
-        <img src="screenshots/alerta-rpm-recuperada.png" alt="RPM reading recovered notification">
-      </figure>
+      <div class="glass-card"><img src="screenshots/alerta-rpm-bajas.png" alt="Low RPM alert"></div>
+      <div class="glass-card"><img src="screenshots/alertas-rpm-recuperacion.png" alt="Alerts: low RPM and recovery"></div>
+      <div class="glass-card"><img src="screenshots/alerta-rpm-recuperada.png" alt="RPM reading recovered notification"></div>
     </div>
   </section>
 
-  <section id="compatibilidad">
-    <h2><span data-lang="es">Compatibilidad</span><span data-lang="en">Compatibility</span></h2>
-    <div class="compat-box">
+  <section id="compatibilidad" class="container">
+    <div class="section-title">
+      <h2><span data-lang="es">Compatibilidad</span><span data-lang="en">Compatibility</span></h2>
+    </div>
+    <div class="glass-card compat-box">
       <dl>
-        <dt data-lang="es">Placa probada</dt><dt data-lang="en">Tested board</dt>
-        <dd>Gigabyte X99 UD5</dd>
-        <dt data-lang="es">CPU probada</dt><dt data-lang="en">Tested CPU</dt>
-        <dd>Xeon E5-2680 v4</dd>
-        <dt data-lang="es">SO probado</dt><dt data-lang="en">Tested OS</dt>
-        <dd>Debian 13</dd>
-        <dt>LCD</dt>
-        <dd><code>1b1c:0c57</code> — Corsair Nautilus LCD Cap</dd>
+        <dt data-lang="es">Placa probada</dt><dt data-lang="en">Tested board</dt><dd>Gigabyte X99 UD5</dd>
+        <dt data-lang="es">CPU probada</dt><dt data-lang="en">Tested CPU</dt><dd>Xeon E5-2680 v4</dd>
+        <dt data-lang="es">SO probado</dt><dt data-lang="en">Tested OS</dt><dd>Debian 13</dd>
+        <dt>LCD</dt><dd><code>1b1c:0c57</code> — Corsair Nautilus LCD Cap</dd>
       </dl>
       <div data-lang="es">
         <p>La prueba de retirada total de alimentación USB y la validación física completa del asistente RPM siguen pendientes. Otros modelos de LCD no están admitidos por el transporte actual.</p>
-        <p>Consultá la <a href="https://github.com/SRGP74mex/Algor/blob/main/docs/COMPATIBILITY.md">matriz y guía de pruebas</a> para reportar tu propio equipo.</p>
+        <p>Consultá la <a href="https://github.com/SRGP74mex/Algor/blob/main/docs/COMPATIBILITY.md" target="_blank">matriz y guía de pruebas</a> para reportar tu propio equipo.</p>
       </div>
       <div data-lang="en">
         <p>Full USB power-removal testing and complete physical validation of the RPM wizard are still pending. Other LCD models are not supported by the current transport layer.</p>
-        <p>See the <a href="https://github.com/SRGP74mex/Algor/blob/main/docs/COMPATIBILITY.md">compatibility matrix and testing guide</a> to report your own hardware.</p>
+        <p>See the <a href="https://github.com/SRGP74mex/Algor/blob/main/docs/COMPATIBILITY.md" target="_blank">compatibility matrix and testing guide</a> to report your own hardware.</p>
       </div>
     </div>
   </section>
 
-  <section id="instalar">
-    <h2><span data-lang="es">Instalación desde el código fuente</span><span data-lang="en">Installing from source</span></h2>
-    <div data-lang="es"><p>Requisitos: Linux de escritorio, Python 3.10–3.13, entorno virtual, libusb y bibliotecas Qt.</p></div>
-    <div data-lang="en"><p>Requirements: Linux desktop, Python 3.10–3.13, virtual environment, libusb and Qt libraries.</p></div>
-    <pre><code>sudo apt update
+  <section id="instalar" class="container">
+    <div class="install-section">
+      <h2>🚀 <span data-lang="es">Instalación desde el código fuente</span><span data-lang="en">Install from source</span></h2>
+      <p data-lang="es">Linux de escritorio, Python 3.10–3.13, entorno virtual, libusb y bibliotecas Qt.</p>
+      <p data-lang="en">Linux desktop, Python 3.10–3.13, virtual environment, libusb and Qt libraries.</p>
+
+      <div class="steps-grid">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div data-lang="es"><h4>Cloná el repositorio</h4><p>O descargá el ZIP desde <code>Code → Download ZIP</code>.</p></div>
+          <div data-lang="en"><h4>Clone the repository</h4><p>Or download the ZIP from <code>Code → Download ZIP</code>.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div data-lang="es"><h4>Creá el entorno</h4><p>Instalá dependencias con <code>pip</code> en un venv aislado.</p></div>
+          <div data-lang="en"><h4>Create the environment</h4><p>Install dependencies with <code>pip</code> inside an isolated venv.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div data-lang="es"><h4>Habilitá el LCD</h4><p>Instalá la regla udev para acceso USB y corré <code>main.py</code>.</p></div>
+          <div data-lang="en"><h4>Enable the LCD</h4><p>Install the udev rule for USB access and run <code>main.py</code>.</p></div>
+        </div>
+      </div>
+
+      <pre><code>sudo apt update
 sudo apt install python3-venv libusb-1.0-0 libegl1 libopengl0 libxcb-cursor0
 
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python main.py</code></pre>
-    <div data-lang="es"><p>Guía completa, acceso USB al LCD y desinstalación en el <a href="https://github.com/SRGP74mex/Algor#instalaci%C3%B3n-desde-el-c%C3%B3digo-fuente">README del repositorio</a>.</p></div>
-    <div data-lang="en"><p>Full guide, USB access for the LCD and uninstalling in the <a href="https://github.com/SRGP74mex/Algor/blob/main/README.en.md#installing-from-source">repository README</a>.</p></div>
+      <p style="margin-top:20px">
+        <span data-lang="es">Guía completa, acceso USB al LCD y desinstalación en el <a href="https://github.com/SRGP74mex/Algor#instalaci%C3%B3n-desde-el-c%C3%B3digo-fuente" target="_blank">README del repositorio</a>.</span>
+        <span data-lang="en">Full guide, USB access for the LCD and uninstalling in the <a href="https://github.com/SRGP74mex/Algor/blob/main/README.en.md#installing-from-source" target="_blank">repository README</a>.</span>
+      </p>
+    </div>
   </section>
 
-</main>
+  <footer>
+    <div class="container">
+      <p><strong>Algor</strong> — <span data-lang="es">bajo licencia GNU General Public License v3.0 (GPL-3.0).</span><span data-lang="en">released under the GNU General Public License v3.0 (GPL-3.0).</span></p>
+      <p data-lang="es">Proyecto independiente, sin afiliación con Corsair. Hecho con Python y PySide6.</p>
+      <p data-lang="en">Independent project, not affiliated with Corsair. Built with Python and PySide6.</p>
+      <p style="margin-top:16px">
+        <a href="https://github.com/SRGP74mex/Algor" target="_blank">GitHub</a> &bull;
+        <a href="https://github.com/SRGP74mex/Algor/issues/new/choose" target="_blank"><span data-lang="es">Reportar compatibilidad</span><span data-lang="en">Report compatibility</span></a> &bull;
+        <a href="https://github.com/SRGP74mex/Algor/blob/main/LICENSE" target="_blank">GPL-3.0</a>
+      </p>
+    </div>
+  </footer>
 
-<footer>
-  <div class="links">
-    <a href="https://github.com/SRGP74mex/Algor">GitHub</a>
-    <a href="https://github.com/SRGP74mex/Algor/issues/new/choose">
-      <span data-lang="es">Reportar compatibilidad</span><span data-lang="en">Report compatibility</span>
-    </a>
-    <a href="https://github.com/SRGP74mex/Algor/blob/main/LICENSE">GPL-3.0</a>
-  </div>
-  <div data-lang="es">Código bajo GPL-3.0. Proyecto independiente, sin afiliación con Corsair.</div>
-  <div data-lang="en">Code under GPL-3.0. Independent project, not affiliated with Corsair.</div>
-</footer>
+  <script>
+    function copyCommand() {
+      const text = document.getElementById('clone-cmd').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const t = document.getElementById('copy-text');
+        t.innerText = 'Copied! ✓';
+        setTimeout(() => { t.innerText = 'Copy'; }, 2000);
+      });
+    }
 
-<script>
-(function(){
-  var stored = null;
-  try { stored = localStorage.getItem('algor-lang'); } catch(e) {}
-  var lang = stored || (navigator.language && navigator.language.slice(0,2) === 'en' ? 'en' : 'es');
-  function apply(l){
-    document.documentElement.setAttribute('data-active', l);
-    document.documentElement.lang = l;
-    document.getElementById('btn-es').classList.toggle('active', l === 'es');
-    document.getElementById('btn-en').classList.toggle('active', l === 'en');
-  }
-  apply(lang);
-  document.querySelectorAll('[data-set-lang]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var l = btn.getAttribute('data-set-lang');
-      apply(l);
-      try { localStorage.setItem('algor-lang', l); } catch(e) {}
-    });
-  });
-})();
-</script>
+    function switchShot(which, btn) {
+      const img = document.getElementById('preview-img');
+      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      img.src = which === 'lcd' ? 'screenshots/pantalla-lcd-cap.png' : 'screenshots/panel-general.png';
+    }
 
+    (function(){
+      var stored = null;
+      try { stored = localStorage.getItem('algor-lang'); } catch(e) {}
+      var lang = stored || (navigator.language && navigator.language.slice(0,2) === 'en' ? 'en' : 'es');
+      function apply(l){
+        document.documentElement.setAttribute('data-active', l);
+        document.documentElement.lang = l;
+        document.getElementById('btn-es').classList.toggle('active', l === 'es');
+        document.getElementById('btn-en').classList.toggle('active', l === 'en');
+      }
+      apply(lang);
+      document.querySelectorAll('[data-set-lang]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var l = btn.getAttribute('data-set-lang');
+          apply(l);
+          try { localStorage.setItem('algor-lang', l); } catch(e) {}
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
