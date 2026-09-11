@@ -17,6 +17,9 @@ def main():
         environment = {key: str(Path(folder) / value) for key, value in {
             'XDG_CONFIG_HOME': 'config', 'XDG_DATA_HOME': 'data', 'XDG_STATE_HOME': 'state',
             'XDG_CACHE_HOME': 'cache'}.items()}
+        # Pin locale env vars so tests assert on the Spanish source strings
+        # regardless of the host/CI locale (gettext reads these directly).
+        environment.update({'LANGUAGE': '', 'LC_ALL': 'C', 'LC_MESSAGES': 'C', 'LANG': 'C'})
         with patch.object(Path, 'home', return_value=Path(folder)), patch.dict(os.environ, environment):
             suite = unittest.defaultTestLoader.discover(str(ROOT / 'tests'), top_level_dir=str(ROOT))
             return 0 if unittest.TextTestRunner(verbosity=2).run(suite).wasSuccessful() else 1
