@@ -11,9 +11,10 @@ from algor.core.lcd_renderer import (
     LCD_VALUE_FONT_SIZE_DUAL_MIN, LCD_VALUE_FONT_SIZE_DUAL_MAX,
     LCD_TITLE_FONT_SIZE_SINGLE_MIN, LCD_TITLE_FONT_SIZE_SINGLE_MAX,
     LCD_VALUE_FONT_SIZE_SINGLE_MIN, LCD_VALUE_FONT_SIZE_SINGLE_MAX,
+    LCD_FONT_CANDIDATES, lcd_font,
 )
 
-FONT_PATH = Path('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf')
+FONT_PATH = LCD_FONT_CANDIDATES[0]
 # Mismo círculo que dibuja el renderer: ellipse((25,25,455,455), width=8).
 RING_RADIUS = (455 - 25) / 2
 SAFE_MARGIN_PX = 20  # separación mínima deseada contra el borde físico de la pantalla
@@ -48,6 +49,21 @@ class NormalizeSettingsTextScaleTests(unittest.TestCase):
         self.assertEqual(normalize_settings({'text_scale': 'grande'})['text_scale'], 0)
 
 
+class LCDFontTests(unittest.TestCase):
+    """Regresión: en distros donde DejaVu no vive en la ruta de Debian, el
+    renderer caía a la fuente bitmap de Pillow (~11 px, ignora el tamaño)."""
+
+    def test_bundled_font_ships_with_algor(self):
+        self.assertTrue(FONT_PATH.is_file())
+
+    def test_font_size_is_honoured(self):
+        probe = ImageDraw.Draw(Image.new('RGB', (1, 1)))
+        small = probe.textbbox((0, 0), '42.0 °C', font=lcd_font(52))
+        large = probe.textbbox((0, 0), '42.0 °C', font=lcd_font(70))
+        self.assertGreater(large[3] - large[1], small[3] - small[1])
+        self.assertGreater(small[3] - small[1], 30)
+
+
 class LCDRendererSmokeTests(unittest.TestCase):
     def test_render_dual_reading_produces_valid_square_jpeg(self):
         renderer = LCDRenderer()
@@ -71,7 +87,6 @@ class LCDRendererSmokeTests(unittest.TestCase):
         self.assertEqual(image.size, (LCD_CANVAS_SIZE, LCD_CANVAS_SIZE))
 
 
-@unittest.skipUnless(FONT_PATH.exists(), "DejaVu Sans no está instalada en este entorno")
 class LCDRendererFontFitTests(unittest.TestCase):
     """El extremo superior del rango de tamaño (text_scale=100) es deliberadamente
     el más grande que cabe sin recortarse contra el borde redondo real — ver el

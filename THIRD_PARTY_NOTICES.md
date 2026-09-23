@@ -11,6 +11,14 @@ Las muestras JPEG A/B/C procedentes de capturas de iCUE no se incluyen. El códi
 conserva soporte opcional para la investigación local y funciona sin esas imágenes.
 No se atribuye al proyecto la titularidad de emblemas de otros fabricantes.
 
+## Fuente DejaVu Sans
+
+`algor/assets/fonts/DejaVuSans.ttf` se incluye para dibujar el texto de sensores
+en el LCD con el mismo aspecto en cualquier distribución. DejaVu Sans deriva de
+Bitstream Vera (© 2003 Bitstream, Inc.); los cambios de DejaVu son de dominio
+público. Se distribuye sin modificar bajo la licencia Bitstream Vera, incluida en
+`algor/assets/fonts/LICENSE-DejaVu.txt`.
+
 ## Tux
 
 La [Linux Foundation](https://www.linuxfoundation.org/legal/the-linux-mark)

@@ -3,6 +3,7 @@ from io import BytesIO
 import math
 import time
 from bisect import bisect_right
+from functools import lru_cache
 from algor.core.media_library import validate_media, MAX_FILE_BYTES
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -30,6 +31,37 @@ def scaled_font_size(min_size: int, max_size: int, text_scale: int) -> int:
     (el límite seguro sin recortarse contra el borde del LCD) según text_scale
     (0-100)."""
     return round(min_size + (max_size - min_size) * (text_scale / 100))
+
+
+# La fuente va incluida con Algor: la ruta de DejaVu cambia entre distribuciones
+# (Debian: truetype/dejavu, Arch: TTF, Fedora: dejavu-sans-fonts...) y, si no se
+# encontraba, Pillow caía a su fuente bitmap de ~11 px que ignora el tamaño: el
+# texto salía diminuto en el LCD y el control de tamaño no tenía efecto.
+LCD_FONT_CANDIDATES = (
+    Path(__file__).resolve().parent.parent / 'assets' / 'fonts' / 'DejaVuSans.ttf',
+    Path('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'),
+    Path('/usr/share/fonts/TTF/DejaVuSans.ttf'),
+    Path('/usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf'),
+    Path('/usr/share/fonts/dejavu/DejaVuSans.ttf'),
+    Path('/usr/share/fonts/truetype/DejaVuSans.ttf'),
+)
+
+
+@lru_cache(maxsize=1)
+def lcd_font_path():
+    return next((path for path in LCD_FONT_CANDIDATES if path.is_file()), None)
+
+
+@lru_cache(maxsize=32)
+def lcd_font(size: int):
+    path = lcd_font_path()
+    if path is not None:
+        try:
+            return ImageFont.truetype(str(path), size)
+        except OSError:
+            pass
+    # Pillow >= 10.1 escala la fuente por defecto si recibe el tamaño.
+    return ImageFont.load_default(size)
 
 
 def normalize_settings(settings):
@@ -127,9 +159,7 @@ class LCDRenderer:
             image = Image.new('RGB', (480, 480), '#101827')
             draw = ImageDraw.Draw(image)
             color = settings['accent_color']
-            font_path = Path('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf')
-            def font(size):
-                return ImageFont.truetype(str(font_path), size) if font_path.exists() else ImageFont.load_default()
+            font = lcd_font
             draw.ellipse((25, 25, 455, 455), outline=color, width=8)
             readings = []
             if settings['show_temperature']:
