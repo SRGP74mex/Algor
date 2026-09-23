@@ -75,10 +75,26 @@ class LCDView(QWidget):
         sensor_layout.addWidget(QLabel(_('Color del contenido')))
         self.color_picker = ColorPicker(self.lcd_cfg['accent_color'])
         sensor_layout.addWidget(self.color_picker)
+        sensor_layout.addWidget(QLabel(_('Tamaño del texto en el LCD')))
+        text_scale_row = QHBoxLayout()
+        self.slider_text_scale = QSlider(Qt.Orientation.Horizontal)
+        self.slider_text_scale.setRange(0, 100)
+        self.slider_text_scale.setValue(self.lcd_cfg['text_scale'])
+        self.lbl_text_scale_val = QLabel(f"{self.lcd_cfg['text_scale']} %")
+        text_scale_row.addWidget(self.slider_text_scale)
+        text_scale_row.addWidget(self.lbl_text_scale_val)
+        sensor_layout.addLayout(text_scale_row)
+        text_scale_note = QLabel(_('0% = tamaño original · 100% = el más grande que cabe sin desbordar la pantalla redonda.'))
+        text_scale_note.setWordWrap(True)
+        text_scale_note.setStyleSheet(f'color: #a5afc5; font-size: {Theme.pt(-2)}pt;')
+        sensor_layout.addWidget(text_scale_note)
         right.addWidget(self.sensor_controls)
         self.chk_temperature.toggled.connect(self._sensor_options_changed)
         self.chk_usage.toggled.connect(self._sensor_options_changed)
         self.color_picker.color_changed.connect(self._color_changed)
+        self.slider_text_scale.valueChanged.connect(lambda v: self.lbl_text_scale_val.setText(f'{v} %'))
+        self.slider_text_scale.sliderReleased.connect(self._text_scale_released)
+        self.slider_text_scale.valueChanged.connect(self._text_scale_keyboard)
         self.btn_select_img = QPushButton(_('Importar imagen / GIF…'))
         self.lbl_image_path = QLabel(self.lcd_cfg['custom_image_path'] or _('Ninguna imagen seleccionada'))
         self.lbl_image_path.setWordWrap(True)
@@ -212,6 +228,14 @@ class LCDView(QWidget):
     def _brightness_keyboard(self, value):
         if not self.slider_bright.isSliderDown():
             self._brightness_released()
+
+    def _text_scale_released(self):
+        self.lcd_cfg['text_scale'] = self.slider_text_scale.value()
+        self._persist()
+
+    def _text_scale_keyboard(self, value):
+        if not self.slider_text_scale.isSliderDown():
+            self._text_scale_released()
 
     def _rotate(self):
         self.lcd_cfg['rotation'] = (self.lcd_cfg['rotation'] + 90) % 360

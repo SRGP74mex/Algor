@@ -60,7 +60,10 @@ DEFAULT_CONFIG = {
         "fps": 30,
         "show_clock": True,
         "rotation": 0,  # grados: 0, 90, 180, 270
-        "case_color": "Black"  # etiqueta cosmética ('Black' / 'White'), no controla hardware RGB
+        "case_color": "Black",  # etiqueta cosmética ('Black' / 'White'), no controla hardware RGB
+        # 0-100: tamaño del texto de sensores en el LCD físico. 0 = tamaño original
+        # armónico (por defecto); 100 = máximo legible sin desbordar la pantalla redonda.
+        "text_scale": 0
     },
     "fan_mappings": {},
     "alerts": {

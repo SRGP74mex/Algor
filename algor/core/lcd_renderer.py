@@ -7,6 +7,30 @@ from algor.core.media_library import validate_media, MAX_FILE_BYTES
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 
+LCD_CANVAS_SIZE = 480
+
+# Rango del texto de sensores en el LCD Cap físico (pantalla redonda de ~2.1"-2.3",
+# nada que ver con la fuente de la interfaz de escritorio). El mínimo es el tamaño
+# original, elegido a propósito por ser armónico en la pantalla; el máximo se midió
+# con textbbox contra la cuerda disponible del círculo en cada fila (con margen) para
+# que nunca se recorte contra el borde físico — ver tests/test_lcd_renderer.py.
+# `text_scale` (0-100, ver normalize_settings) interpola entre ambos extremos.
+LCD_TITLE_FONT_SIZE_DUAL_MIN = 21
+LCD_TITLE_FONT_SIZE_DUAL_MAX = 27
+LCD_VALUE_FONT_SIZE_DUAL_MIN = 52
+LCD_VALUE_FONT_SIZE_DUAL_MAX = 70
+LCD_TITLE_FONT_SIZE_SINGLE_MIN = 24
+LCD_TITLE_FONT_SIZE_SINGLE_MAX = 32
+LCD_VALUE_FONT_SIZE_SINGLE_MIN = 66
+LCD_VALUE_FONT_SIZE_SINGLE_MAX = 84
+
+
+def scaled_font_size(min_size: int, max_size: int, text_scale: int) -> int:
+    """Interpola entre el tamaño mínimo (armónico, por defecto) y el máximo
+    (el límite seguro sin recortarse contra el borde del LCD) según text_scale
+    (0-100)."""
+    return round(min_size + (max_size - min_size) * (text_scale / 100))
+
 
 def normalize_settings(settings):
     def bounded(value, default, low, high):
@@ -29,7 +53,9 @@ def normalize_settings(settings):
                 rotation=rotation if rotation in (0, 90, 180, 270) else 0,
                 accent_color=accent,
                 show_temperature=settings.get('show_temperature', True) is not False,
-                show_usage=settings.get('show_usage', False) is True)
+                show_usage=settings.get('show_usage', False) is True,
+                # 0 = tamaño original armónico (por defecto); 100 = máximo legible sin desbordar.
+                text_scale=bounded(settings.get('text_scale', 0), 0, 0, 100))
 
 
 def cpu_reading(data, received_at, now):
@@ -110,16 +136,21 @@ class LCDRenderer:
                 readings.append(('TEMPERATURA CPU', f'{cpu_temp:.1f} °C' if cpu_temp is not None else 'N/D'))
             if settings['show_usage']:
                 readings.append(('CARGA CPU', f'{cpu_usage:.0f} %' if cpu_usage is not None else 'N/D'))
+            text_scale = settings['text_scale']
             draw.text((240, 92), 'ALGOR', font=font(28), fill=color, anchor='mm')
             if len(readings) == 2:
+                title_size = scaled_font_size(LCD_TITLE_FONT_SIZE_DUAL_MIN, LCD_TITLE_FONT_SIZE_DUAL_MAX, text_scale)
+                value_size = scaled_font_size(LCD_VALUE_FONT_SIZE_DUAL_MIN, LCD_VALUE_FONT_SIZE_DUAL_MAX, text_scale)
                 for (title, reading), y in zip(readings, (170, 295)):
-                    draw.text((240, y), title, font=font(21), fill='#b9c2d4', anchor='mm')
-                    draw.text((240, y+47), reading, font=font(52), fill=color, anchor='mm')
+                    draw.text((240, y), title, font=font(title_size), fill='#b9c2d4', anchor='mm')
+                    draw.text((240, y+47), reading, font=font(value_size), fill=color, anchor='mm')
                 draw.line((125,258,355,258), fill='#36445e', width=2)
             elif readings:
                 title, reading = readings[0]
-                draw.text((240, 178), title, font=font(24), fill='#b9c2d4', anchor='mm')
-                draw.text((240, 255), reading, font=font(66), fill=color, anchor='mm')
+                title_size = scaled_font_size(LCD_TITLE_FONT_SIZE_SINGLE_MIN, LCD_TITLE_FONT_SIZE_SINGLE_MAX, text_scale)
+                value_size = scaled_font_size(LCD_VALUE_FONT_SIZE_SINGLE_MIN, LCD_VALUE_FONT_SIZE_SINGLE_MAX, text_scale)
+                draw.text((240, 178), title, font=font(title_size), fill='#b9c2d4', anchor='mm')
+                draw.text((240, 255), reading, font=font(value_size), fill=color, anchor='mm')
             else:
                 draw.text((240, 235), 'Sensores ocultos', font=font(27), fill=color, anchor='mm')
             draw.text((240, 385), 'Sensores Linux', font=font(18), fill='#b9c2d4', anchor='mm')
