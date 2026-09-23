@@ -18,7 +18,7 @@ class CustomizeDashboardDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle(_("Personalizar Panel"))
         self.setMinimumSize(440, 540)
-        self.setStyleSheet(Theme.STYLESHEET)
+        self.setStyleSheet(Theme.build_stylesheet())
         self._checks: Dict[str, QCheckBox] = {}
         self._build_ui(current_ids, latest_data)
 
@@ -28,12 +28,12 @@ class CustomizeDashboardDialog(QDialog):
         layout.setSpacing(12)
 
         title = QLabel(_("🧩 Personalizar Panel General"))
-        title.setStyleSheet("font-weight: bold; font-size: 16px; color: #f0f6fc;")
+        title.setStyleSheet(f"font-weight: bold; font-size: {Theme.pt(3)}pt; color: #f0f6fc;")
         layout.addWidget(title)
 
         subtitle = QLabel(_("Elige qué sensores se muestran como medidores circulares en el Panel General."))
         subtitle.setWordWrap(True)
-        subtitle.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: 12px;")
+        subtitle.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: {Theme.pt(-1)}pt;")
         layout.addWidget(subtitle)
 
         scroll = QScrollArea()
@@ -58,7 +58,7 @@ class CustomizeDashboardDialog(QDialog):
             group_layout.setSpacing(4)
 
             cat_label = QLabel(category.upper())
-            cat_label.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: 11px; font-weight: 700; letter-spacing: 1px;")
+            cat_label.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: {Theme.pt(-2)}pt; font-weight: 700; letter-spacing: 1px;")
             group_layout.addWidget(cat_label)
 
             for sensor in cat_sensors:

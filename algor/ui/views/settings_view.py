@@ -25,6 +25,7 @@ class SettingsView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._last_data: Optional[TelemetryData] = None
+        self.worker = None
         self._dynamic_sensors_loaded = False
         self._sensor_checks: dict[str, QCheckBox] = {}
         self.logger = SensorLogger()
@@ -99,7 +100,7 @@ class SettingsView(QWidget):
         udev_vbox.setSpacing(10)
 
         title_udev = QLabel(_("🔌 Permisos USB del Nautilus LCD Cap"))
-        title_udev.setStyleSheet("font-weight: bold; font-size: 14px; color: #f0f6fc;")
+        title_udev.setStyleSheet(f"font-weight: bold; font-size: {Theme.pt(1)}pt; color: #f0f6fc;")
         udev_vbox.addWidget(title_udev)
 
         desc_udev = QLabel(_(
@@ -109,7 +110,7 @@ class SettingsView(QWidget):
             "Después de instalarla, reinicia el equipo para aplicar los permisos."
         ))
         desc_udev.setWordWrap(True)
-        desc_udev.setStyleSheet("color: #8b949e; font-size: 12px;")
+        desc_udev.setStyleSheet(f"color: #8b949e; font-size: {Theme.pt(-1)}pt;")
         udev_vbox.addWidget(desc_udev)
 
         btn_udev = QPushButton(_("🛡️ Instalar permisos del LCD Cap"))
@@ -127,7 +128,7 @@ class SettingsView(QWidget):
         pwm_vbox.setSpacing(10)
 
         title_pwm = QLabel(_("🌀 Control real de PWM (Reactivo) — experimental"))
-        title_pwm.setStyleSheet("font-weight: bold; font-size: 14px; color: #f0f6fc;")
+        title_pwm.setStyleSheet(f"font-weight: bold; font-size: {Theme.pt(1)}pt; color: #f0f6fc;")
         pwm_vbox.addWidget(title_pwm)
 
         desc_pwm = QLabel(_(
@@ -139,12 +140,17 @@ class SettingsView(QWidget):
             "Reactivo nunca se recuerda entre reinicios: cada sesión empieza en Automático."
         ).format(floor=PROTECTION_FLOOR_PERCENT))
         desc_pwm.setWordWrap(True)
-        desc_pwm.setStyleSheet("color: #8b949e; font-size: 12px;")
+        desc_pwm.setStyleSheet(f"color: #8b949e; font-size: {Theme.pt(-1)}pt;")
         pwm_vbox.addWidget(desc_pwm)
 
         btn_pwm_udev = QPushButton(_("🛡️ Instalar permisos de escritura PWM"))
         btn_pwm_udev.clicked.connect(self._install_pwm_udev_rule)
         pwm_vbox.addWidget(btn_pwm_udev, alignment=Qt.AlignmentFlag.AlignLeft)
+
+        btn_restore_auto = QPushButton(_("🔄 Restablecer todos los ventiladores a Automático (BIOS)"))
+        btn_restore_auto.setStyleSheet("background-color: #1f6feb; border-color: #388bfd; color: #ffffff; font-weight: bold; padding: 7px;")
+        btn_restore_auto.clicked.connect(self._restore_all_fans_to_auto)
+        pwm_vbox.addWidget(btn_restore_auto, alignment=Qt.AlignmentFlag.AlignLeft)
 
         self.chk_real_control = QCheckBox(_("Activar Reactivo"))
         self.chk_real_control.setChecked(False)
@@ -154,7 +160,7 @@ class SettingsView(QWidget):
 
         self.lbl_pwm_eligible = QLabel(_("Sin canales verificados todavía."))
         self.lbl_pwm_eligible.setWordWrap(True)
-        self.lbl_pwm_eligible.setStyleSheet("color: #8b949e; font-size: 11px;")
+        self.lbl_pwm_eligible.setStyleSheet(f"color: #8b949e; font-size: {Theme.pt(-2)}pt;")
         pwm_vbox.addWidget(self.lbl_pwm_eligible)
 
         layout.addWidget(pwm_card)
@@ -167,7 +173,7 @@ class SettingsView(QWidget):
         poll_vbox.setSpacing(10)
 
         title_poll = QLabel(_("⚡ Rendimiento y Frecuencia de Sensores"))
-        title_poll.setStyleSheet("font-weight: bold; font-size: 14px; color: #f0f6fc;")
+        title_poll.setStyleSheet(f"font-weight: bold; font-size: {Theme.pt(1)}pt; color: #f0f6fc;")
         poll_vbox.addWidget(title_poll)
 
         poll_hbox = QHBoxLayout()
@@ -196,11 +202,11 @@ class SettingsView(QWidget):
         log_vbox.setSpacing(10)
 
         title_log = QLabel(_("📝 Registro de Sensores (CSV)"))
-        title_log.setStyleSheet("font-weight: bold; font-size: 14px; color: #f0f6fc;")
+        title_log.setStyleSheet(f"font-weight: bold; font-size: {Theme.pt(1)}pt; color: #f0f6fc;")
         log_vbox.addWidget(title_log)
 
         desc_log = QLabel(_("Guarda la telemetría seleccionada en un archivo CSV a intervalos regulares."))
-        desc_log.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: 12px;")
+        desc_log.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: {Theme.pt(-1)}pt;")
         log_vbox.addWidget(desc_log)
 
         # Ubicación
@@ -209,7 +215,7 @@ class SettingsView(QWidget):
         log_cfg = config.get("sensor_logging", {})
         default_dir = log_cfg.get("directory") or str(Path.home() / "Documents")
         self.lbl_log_dir = QLabel(default_dir)
-        self.lbl_log_dir.setStyleSheet(f"color: {Theme.TEXT_TITLE}; font-size: 12px;")
+        self.lbl_log_dir.setStyleSheet(f"color: {Theme.TEXT_TITLE}; font-size: {Theme.pt(-1)}pt;")
         loc_row.addWidget(self.lbl_log_dir, 1)
         btn_browse = QPushButton(_("📁 Elegir Carpeta..."))
         btn_browse.clicked.connect(self._choose_log_directory)
@@ -267,10 +273,53 @@ class SettingsView(QWidget):
 
         self.lbl_log_status = QLabel("")
         self.lbl_log_status.setWordWrap(True)
-        self.lbl_log_status.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: 11px;")
+        self.lbl_log_status.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: {Theme.pt(-2)}pt;")
         log_vbox.addWidget(self.lbl_log_status)
 
         layout.addWidget(log_card)
+
+        # 2c. Apariencia: tamaño de fuente
+        appearance_card = QFrame()
+        appearance_card.setObjectName("Card")
+        appearance_vbox = QVBoxLayout(appearance_card)
+        appearance_vbox.setContentsMargins(16, 14, 16, 14)
+        appearance_vbox.setSpacing(10)
+
+        title_appearance = QLabel(_("🔤 Apariencia y Tamaño de Fuente"))
+        title_appearance.setStyleSheet(f"font-weight: bold; font-size: {Theme.pt(1)}pt; color: #f0f6fc;")
+        appearance_vbox.addWidget(title_appearance)
+
+        desc_appearance = QLabel(_(
+            "Si el texto se ve muy pequeño en tu pantalla, desactiva «Automático» y elige "
+            "un tamaño manual. El cambio se aplica al reiniciar Algor."
+        ))
+        desc_appearance.setWordWrap(True)
+        desc_appearance.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: {Theme.pt(-1)}pt;")
+        appearance_vbox.addWidget(desc_appearance)
+
+        font_row = QHBoxLayout()
+        current_font_pt = config.get("ui_font_point_size")
+        self.chk_font_auto = QCheckBox(_("Automático (usar el tamaño del sistema)"))
+        self.chk_font_auto.setChecked(current_font_pt is None)
+        font_row.addWidget(self.chk_font_auto)
+
+        self.spin_font_size = QSpinBox()
+        self.spin_font_size.setRange(7, 32)
+        self.spin_font_size.setSuffix(" pt")
+        self.spin_font_size.setValue(current_font_pt if current_font_pt else Theme.base_pt())
+        self.spin_font_size.setEnabled(current_font_pt is not None)
+        font_row.addWidget(self.spin_font_size)
+        font_row.addStretch()
+        appearance_vbox.addLayout(font_row)
+        self.chk_font_auto.toggled.connect(self._on_font_auto_toggled)
+        self.spin_font_size.valueChanged.connect(self._on_font_size_changed)
+
+        self.lbl_font_restart_note = QLabel("")
+        self.lbl_font_restart_note.setWordWrap(True)
+        self.lbl_font_restart_note.setStyleSheet(f"color: #ffaa00; font-size: {Theme.pt(-2)}pt;")
+        appearance_vbox.addWidget(self.lbl_font_restart_note)
+
+        layout.addWidget(appearance_card)
 
         # 3. Opciones de Sistema y Bandeja
         sys_card = QFrame()
@@ -280,7 +329,7 @@ class SettingsView(QWidget):
         sys_vbox.setSpacing(10)
 
         title_sys = QLabel(_("🖥️ Integración con el Sistema"))
-        title_sys.setStyleSheet("font-weight: bold; font-size: 14px; color: #f0f6fc;")
+        title_sys.setStyleSheet(f"font-weight: bold; font-size: {Theme.pt(1)}pt; color: #f0f6fc;")
         sys_vbox.addWidget(title_sys)
 
         self.chk_tray = QCheckBox(_("Minimizar a la bandeja del sistema (System Tray)"))
@@ -337,6 +386,19 @@ class SettingsView(QWidget):
     def _on_poll_changed(self, val: int):
         self.lbl_poll_val.setText(f"{val} ms")
         config.set("polling_interval_ms", val)
+
+    def _on_font_auto_toggled(self, checked: bool) -> None:
+        self.spin_font_size.setEnabled(not checked)
+        config.set("ui_font_point_size", None if checked else self.spin_font_size.value())
+        self._show_font_restart_note()
+
+    def _on_font_size_changed(self, val: int) -> None:
+        if not self.chk_font_auto.isChecked():
+            config.set("ui_font_point_size", val)
+            self._show_font_restart_note()
+
+    def _show_font_restart_note(self) -> None:
+        self.lbl_font_restart_note.setText(_("⚠️ Reinicia Algor para aplicar el nuevo tamaño de fuente."))
 
     def _install_udev_rule(self):
         script_path = Path(__file__).resolve().parents[3] / "setup_udev.sh"
@@ -492,7 +554,7 @@ class SettingsView(QWidget):
             if sensor.category != current_category:
                 current_category = sensor.category
                 cat_label = QLabel(current_category.upper())
-                cat_label.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: 10px; font-weight: 700; letter-spacing: 1px;")
+                cat_label.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: {Theme.pt(-3)}pt; font-weight: 700; letter-spacing: 1px;")
                 self._sensors_layout.addWidget(cat_label)
 
             chk = QCheckBox(f"{sensor.label}  ({sensor.unit})")
@@ -552,6 +614,24 @@ class SettingsView(QWidget):
     def _on_logging_auto_stopped(self) -> None:
         self._set_logging_ui_idle()
         self.lbl_log_status.setText(_("✅ Registro finalizado (límite de duración alcanzado): {path}").format(path=self.logger.path))
+
+    def _restore_all_fans_to_auto(self):
+        """Restablece incondicionalmente todos los canales del sistema a Automático (enable=2)."""
+        restored = []
+        if self.worker:
+            restored = self.worker.request_restore_all_auto()
+        else:
+            from algor.core.pwm_writer import _global_cleanup
+            _global_cleanup()
+
+        if self.chk_real_control.isChecked():
+            self.chk_real_control.setChecked(False)
+
+        msg = _("✅ Se han restablecido todos los ventiladores al control Automático de la BIOS.")
+        if restored:
+            msg += f" ({len(restored)} " + _("canales liberados)")
+        self.lbl_pwm_eligible.setText(msg)
+        self.lbl_pwm_eligible.setStyleSheet(f"color: #00e676; font-size: {Theme.pt(-2)}pt;")
 
     def feed_telemetry(self, data: TelemetryData) -> None:
         """Llamado en cada tick de telemetría para alimentar el registro CSV activo

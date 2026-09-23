@@ -102,12 +102,12 @@ class TitleBar(QFrame):
         badge_layout.setContentsMargins(0, 0, 0, 0)
         badge_layout.setSpacing(0)
         lbl_app = QLabel("❖  Algor")
-        lbl_app.setStyleSheet("font-weight: 600; font-size: 13px; color: #c3c7db; letter-spacing: 0.5px;")
+        lbl_app.setStyleSheet(f"font-weight: 600; font-size: {Theme.pt(0)}pt; color: #c3c7db; letter-spacing: 0.5px;")
         lbl_app.setAlignment(Qt.AlignmentFlag.AlignCenter)
         lbl_app.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         badge_layout.addWidget(lbl_app)
         lbl_hardware = QLabel("Corsair Nautilus 360 RS")
-        lbl_hardware.setStyleSheet("font-size: 9px; color: #6b7280; letter-spacing: 0.3px;")
+        lbl_hardware.setStyleSheet(f"font-size: {Theme.pt(-4)}pt; color: #6b7280; letter-spacing: 0.3px;")
         lbl_hardware.setAlignment(Qt.AlignmentFlag.AlignCenter)
         lbl_hardware.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         badge_layout.addWidget(lbl_hardware)
@@ -119,7 +119,7 @@ class TitleBar(QFrame):
         self.lbl_status_pill = QLabel(_("● LCD detenido"))
         self.lbl_status_pill.setStyleSheet(
             "background-color: #122822; color: #10b981; padding: 3px 10px; border-radius: 8px; "
-            "border: 1px solid #1c4b38; font-size: 11px; font-weight: 600;"
+            f"border: 1px solid #1c4b38; font-size: {Theme.pt(-2)}pt; font-weight: 600;"
         )
         self.lbl_status_pill.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         layout.addWidget(self.lbl_status_pill)
@@ -213,6 +213,8 @@ class MainWindow(QMainWindow):
             AlertEvent('lcd_session', 'info', text)))
         self.settings_view.real_control_toggled.connect(self.fan_engine.set_real_control_enabled)
         self.worker.stale_channel_restored.connect(self._on_stale_pwm_restored)
+        self.dashboard_view.worker = self.worker
+        self.settings_view.worker = self.worker
         QApplication.instance().aboutToQuit.connect(self._clean_exit)
         self.lcd_worker.start()
         self.worker.start()
@@ -220,7 +222,7 @@ class MainWindow(QMainWindow):
             self.lcd_view.set_session_requested(True)
 
     def _init_ui(self):
-        self.setStyleSheet(Theme.STYLESHEET)
+        self.setStyleSheet(Theme.build_stylesheet())
 
         # Widget raíz transparente: deja ver el escritorio en los márgenes/esquinas
         root = QWidget()
@@ -546,7 +548,7 @@ class MainWindow(QMainWindow):
         self.lcd_view.stop_import()
         self.lcd_worker.stop()
         try:
-            self.worker.pwm_writer.restore_all(self.worker.sampler.scan_pwm_channels())
+            self.worker.pwm_writer.restore_all_system_channels(self.worker.sampler.scan_pwm_channels())
         except Exception:
             pass
         self.worker.stop()

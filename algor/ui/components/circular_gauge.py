@@ -19,6 +19,8 @@ class CircularGauge(QWidget):
 
     # Emitida al soltar OTRO gauge encima de este: (sensor_id_arrastrado, sensor_id_de_este_gauge).
     reordered = pyqtSignal(str, str)
+    # Emitida al hacer doble clic sobre este gauge (sensor_id).
+    double_clicked = pyqtSignal(str)
 
     def __init__(self, title: str = "TEMP", unit: str = "°C", min_val: float = 0, max_val: float = 100,
                  accent_color: str = "#00f0ff", sensor_id: str = "", parent=None):
@@ -46,6 +48,13 @@ class CircularGauge(QWidget):
         # encima de este para intercambiar sus posiciones en el Panel General.
         self.setAcceptDrops(True)
         self.setCursor(Qt.CursorShape.OpenHandCursor)
+
+    def mouseDoubleClickEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton and self.sensor_id:
+            self.double_clicked.emit(self.sensor_id)
+            event.accept()
+            return
+        super().mouseDoubleClickEvent(event)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:

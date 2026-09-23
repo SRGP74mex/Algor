@@ -1,4 +1,7 @@
+import json
+import tempfile
 import unittest
+from pathlib import Path
 from algor.core.pwm_writer import (PwmWriter, PROTECTION_FLOOR_PERCENT, AUTO_ENABLE_VALUE,
                                     MANUAL_ENABLE_VALUE, percent_to_raw, raw_to_percent)
 
@@ -37,7 +40,10 @@ class PercentConversionTests(unittest.TestCase):
 class PwmWriterApplyTests(unittest.TestCase):
     def setUp(self):
         self.fs = FakeSysfs()
-        self.writer = PwmWriter(write_file=self.fs.write, read_file=self.fs.read)
+        self._tmpdir = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmpdir.cleanup)
+        state_path = Path(self._tmpdir.name) / "manual_pwm_state.json"
+        self.writer = PwmWriter(write_file=self.fs.write, read_file=self.fs.read, state_path=state_path)
         self.channel = make_channel(self.fs)
         self.pwm_channels = {'it8792@/x/pwm2': self.channel}
 
@@ -91,7 +97,10 @@ class PwmWriterApplyTests(unittest.TestCase):
 class PwmWriterRestoreTests(unittest.TestCase):
     def setUp(self):
         self.fs = FakeSysfs()
-        self.writer = PwmWriter(write_file=self.fs.write, read_file=self.fs.read)
+        self._tmpdir = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmpdir.cleanup)
+        self.state_path = Path(self._tmpdir.name) / "manual_pwm_state.json"
+        self.writer = PwmWriter(write_file=self.fs.write, read_file=self.fs.read, state_path=self.state_path)
         self.channel = make_channel(self.fs)
         self.pwm_channels = {'it8792@/x/pwm2': self.channel}
         self.mapping = {'fan2': dict(role='radiator', confirmed=True, pwm_tested=True,
@@ -124,6 +133,81 @@ class PwmWriterRestoreTests(unittest.TestCase):
         restored = self.writer.restore_stale_manual_channels(pump_mapping, self.pwm_channels)
         self.assertEqual(restored, [])
         self.assertEqual(self.fs.read('pwm2_enable'), str(MANUAL_ENABLE_VALUE))
+
+    def test_set_channel_manual_and_auto(self):
+        ok = self.writer.set_channel_manual('it8792@/x/pwm2', self.channel, 100)
+        self.assertTrue(ok)
+        self.assertEqual(self.fs.read('pwm2_enable'), str(MANUAL_ENABLE_VALUE))
+        self.assertEqual(self.fs.read('pwm2'), str(percent_to_raw(100)))
+
+        # Manual with floor bypass (e.g. 27%)
+        ok = self.writer.set_channel_manual('it8792@/x/pwm2', self.channel, 27, enforce_floor=False)
+        self.assertTrue(ok)
+        self.assertEqual(self.fs.read('pwm2'), str(percent_to_raw(27)))
+
+        # Restore single channel to auto
+        ok = self.writer.set_channel_auto('it8792@/x/pwm2', self.channel)
+        self.assertTrue(ok)
+        self.assertEqual(self.fs.read('pwm2_enable'), str(AUTO_ENABLE_VALUE))
+
+    def test_restore_all_system_channels(self):
+        channel2 = make_channel(self.fs, pwm_path='pwm3', enable_path='pwm3_enable', chip='it8620')
+        all_channels = {
+            'it8792@/x/pwm2': self.channel,
+            'it8620@/y/pwm3': channel2,
+        }
+        # Set both to manual
+        self.fs.files['pwm2_enable'] = str(MANUAL_ENABLE_VALUE)
+        self.fs.files['pwm3_enable'] = str(MANUAL_ENABLE_VALUE)
+
+        restored = self.writer.restore_all_system_channels(all_channels)
+        self.assertEqual(len(restored), 2)
+        self.assertEqual(self.fs.read('pwm2_enable'), str(AUTO_ENABLE_VALUE))
+        self.assertEqual(self.fs.read('pwm3_enable'), str(AUTO_ENABLE_VALUE))
+
+    def test_manual_channel_is_recovered_after_simulated_crash(self):
+        # Igual que haría el Ajuste Rápido: fija manual sin pasar por fan_mappings.
+        self.writer.set_channel_manual('it8792@/x/pwm2', self.channel, 100)
+        self.assertEqual(self.fs.read('pwm2_enable'), str(MANUAL_ENABLE_VALUE))
+        persisted = json.loads(self.state_path.read_text(encoding='utf-8'))
+        self.assertEqual(persisted, {'it8792@/x/pwm2': 'pwm2_enable'})
+
+        # "Crash": una instancia nueva (sin _managed en memoria) apunta al mismo
+        # archivo de estado, simulando el próximo arranque de Algor.
+        fresh_writer = PwmWriter(write_file=self.fs.write, read_file=self.fs.read, state_path=self.state_path)
+        restored = fresh_writer.recover_from_previous_session()
+        self.assertEqual(restored, ['it8792@/x/pwm2'])
+        self.assertEqual(self.fs.read('pwm2_enable'), str(AUTO_ENABLE_VALUE))
+        self.assertFalse(self.state_path.exists())
+
+    def test_recovery_is_noop_when_channel_was_cleanly_restored(self):
+        self.writer.set_channel_manual('it8792@/x/pwm2', self.channel, 100)
+        ok = self.writer.set_channel_auto('it8792@/x/pwm2', self.channel)
+        self.assertTrue(ok)
+        # El archivo puede seguir existiendo (con {} vacío) tras la limpieza normal;
+        # lo que importa es que ya no queda ningún canal pendiente de recuperar.
+        self.assertEqual(json.loads(self.state_path.read_text(encoding='utf-8')), {})
+
+        fresh_writer = PwmWriter(write_file=self.fs.write, read_file=self.fs.read, state_path=self.state_path)
+        self.assertEqual(fresh_writer.recover_from_previous_session(), [])
+
+    def test_recovery_never_touches_channels_it_never_set_manual(self):
+        # Otro canal, en manual por una herramienta ajena a Algor: nunca debe tocarse.
+        other_channel = make_channel(self.fs, pwm_path='pwm9', enable_path='pwm9_enable', chip='otro')
+        self.fs.files['pwm9_enable'] = str(MANUAL_ENABLE_VALUE)
+
+        self.writer.set_channel_manual('it8792@/x/pwm2', self.channel, 100)
+        fresh_writer = PwmWriter(write_file=self.fs.write, read_file=self.fs.read, state_path=self.state_path)
+        fresh_writer.recover_from_previous_session()
+
+        self.assertEqual(self.fs.read('pwm9_enable'), str(MANUAL_ENABLE_VALUE))
+
+    def test_no_unscoped_system_wide_sweep_on_module_exit(self):
+        """La red de seguridad a nivel de módulo debe seguir acotada a lo que esta
+        instancia gestionó; nunca a un barrido de todo /sys/class/hwmon del sistema
+        (eso pisaba configuraciones manuales de otras herramientas)."""
+        import algor.core.pwm_writer as pwm_writer_module
+        self.assertFalse(hasattr(pwm_writer_module, '_global_cleanup'))
 
 
 if __name__ == '__main__':

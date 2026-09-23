@@ -4,6 +4,7 @@ from PyQt6.QtCore import Qt, QRectF, QPointF, pyqtSignal
 from PyQt6.QtGui import (QPainter, QColor, QPen, QBrush, QFont, QPainterPath,
                          QLinearGradient, QMouseEvent)
 from PyQt6.QtWidgets import QWidget
+from algor.ui.theme import Theme
 
 
 class CurveEditor(QWidget):
@@ -111,7 +112,7 @@ class CurveEditor(QWidget):
         
         # Grid horizontal (PWM %)
         font_axis = QFont(self.font())
-        font_axis.setPixelSize(10)
+        font_axis.setPointSize(Theme.pt(-3))
         painter.setFont(font_axis)
         
         for pwm_val in range(0, 101, 20):

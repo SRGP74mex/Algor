@@ -11,6 +11,10 @@ logger = get_logger("config")
 DEFAULT_CONFIG = {
     "version": 1,
     "theme": "cyber_dark",
+    # None = automático (usa el tamaño de fuente por defecto de Qt, que ya
+    # respeta QT_FONT_DPI y el factor de escala de texto del sistema).
+    # Si no es None, es un entero en puntos (pt) elegido por el usuario en Ajustes.
+    "ui_font_point_size": None,
     "polling_interval_ms": 1000,
     "temperature_unit": "C",
     "active_profile": "balanced",
@@ -214,6 +218,12 @@ class ConfigManager:
 
         if data.get("active_profile") not in profiles:
             data["active_profile"] = "balanced"
+            changed = True
+
+        font_pt = data.get("ui_font_point_size")
+        if font_pt is not None and (isinstance(font_pt, bool) or not isinstance(font_pt, int) or not 7 <= font_pt <= 32):
+            logger.warning("Tamaño de fuente '%s' inválido en config.json; restaurando automático.", font_pt)
+            data["ui_font_point_size"] = None
             changed = True
 
         alerts = data.get("alerts")

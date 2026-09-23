@@ -2,6 +2,7 @@ from collections import deque
 from PyQt6.QtCore import Qt, QRectF, QPointF
 from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QFont, QPainterPath, QLinearGradient
 from PyQt6.QtWidgets import QWidget
+from algor.ui.theme import Theme
 
 
 class LiveChart(QWidget):
@@ -51,9 +52,9 @@ class LiveChart(QWidget):
 
         # 2. Líneas horizontales de referencia
         font = QFont(self.font())
-        font.setPixelSize(10)
+        font.setPointSize(Theme.pt(-3))
         painter.setFont(font)
-        
+
         grid_pen = QPen(QColor("#1c2638"), 1, Qt.PenStyle.DashLine)
         painter.setPen(grid_pen)
 
@@ -142,7 +143,7 @@ class LiveChart(QWidget):
         
         painter.setPen(QColor("#c9d1d9"))
         font = QFont(self.font())
-        font.setPixelSize(11)
+        font.setPointSize(Theme.pt(-2))
         font.setBold(True)
         painter.setFont(font)
         painter.drawText(QRectF(x + 12, y - 2, 50, 16), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, label)

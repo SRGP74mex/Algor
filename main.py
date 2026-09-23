@@ -6,9 +6,11 @@ import sys
 import signal
 from PyQt6.QtWidgets import QApplication, QSystemTrayIcon
 from PyQt6.QtCore import Qt, QTimer
+from algor.core.config import config
 from algor.core.logging_config import setup_logging
 from algor.core.single_instance import SingleInstanceGuard
 from algor.ui.main_window import MainWindow
+from algor.ui.theme import Theme
 
 
 def main():
@@ -25,6 +27,11 @@ def main():
     # del intérprete), que es EXACTAMENTE el "StartupWMClass=python3" que declara el
     # .desktop de Vorta — así que KWin confundía las dos ventanas entre sí.
     app.setDesktopFileName("algor")
+
+    # Tamaño de fuente: por defecto Qt ya calculó uno acorde a QT_FONT_DPI y al
+    # factor de escala de texto del sistema; si el usuario fijó uno manual en
+    # Ajustes, se usa ese en su lugar.
+    Theme.set_font_override(config.get("ui_font_point_size"))
 
     # Ctrl+C y `kill` deben pasar por el cierre limpio (_clean_exit), no terminar
     # abruptamente: si Reactivo dejó algún canal PWM en modo manual, el cierre

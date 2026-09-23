@@ -404,6 +404,27 @@ class HardwareWorker(QThread):
         aplica en el siguiente ciclo de este hilo, nunca desde la UI directamente."""
         self._pending_manual_pwm = value
 
+    def request_channel_manual_pwm(self, pwm_identity: str, percent: float, enforce_floor: bool = True) -> bool:
+        """Ajusta un canal específico de forma inmediata."""
+        channels = self.sampler.scan_pwm_channels()
+        ch = channels.get(pwm_identity)
+        if ch:
+            return self.pwm_writer.set_channel_manual(pwm_identity, ch, percent, enforce_floor=enforce_floor)
+        return False
+
+    def request_channel_auto(self, pwm_identity: str) -> bool:
+        """Restaura un canal específico a automático."""
+        channels = self.sampler.scan_pwm_channels()
+        ch = channels.get(pwm_identity)
+        if ch:
+            return self.pwm_writer.set_channel_auto(pwm_identity, ch)
+        return False
+
+    def request_restore_all_auto(self) -> list:
+        """Restaura todos los canales del sistema a automático de inmediato."""
+        channels = self.sampler.scan_pwm_channels()
+        return self.pwm_writer.restore_all_system_channels(channels)
+
     def run(self):
         while self._running:
             try:
@@ -412,6 +433,12 @@ class HardwareWorker(QThread):
                     self._startup_pwm_checked = True
                     restored = self.pwm_writer.restore_stale_manual_channels(
                         config.get('fan_mappings', {}), data.pwm_channels)
+                    # Cubre también los canales que el Ajuste Rápido dejó en manual
+                    # sin pasar por fan_mappings, si la sesión anterior murió sin
+                    # avisar (ver PwmWriter.recover_from_previous_session).
+                    for identity in self.pwm_writer.recover_from_previous_session():
+                        if identity not in restored:
+                            restored.append(identity)
                     if restored:
                         self.stale_channel_restored.emit(', '.join(restored))
                 # Calcular y, si corresponde, aplicar el PWM aquí (hilo de hardware),

@@ -1,6 +1,12 @@
 """
 Estilos y paleta visual estilo Custos / macOS Dark Indigo Glassmorphism para Algor.
 """
+from PyQt6.QtWidgets import QApplication
+
+# Tamaño de fuente base por defecto cuando no hay override del usuario ni
+# aplicación Qt disponible todavía (p. ej. al importar este módulo).
+_FALLBACK_BASE_PT = 10
+
 
 class Theme:
     # Colores Principales (Inspirados en la estética Custos)
@@ -37,23 +43,60 @@ class Theme:
     # Fuente monoespaciada para valores numéricos (estilo Custos)
     FONT_MONO = '"JetBrains Mono", "SF Mono", "Cascadia Code", Consolas, monospace'
 
-    # Hoja de estilo global Qt
-    STYLESHEET = f"""
+    # Tamaño de fuente base en puntos elegido por el usuario en Ajustes.
+    # None = automático: se usa el tamaño por defecto que Qt calculó para esta
+    # pantalla (respeta QT_FONT_DPI y el factor de escala de texto del sistema).
+    _override_pt: int | None = None
+
+    @classmethod
+    def set_font_override(cls, point_size: int | None) -> None:
+        cls._override_pt = point_size
+
+    @classmethod
+    def base_pt(cls) -> int:
+        """Tamaño base: el elegido en Ajustes o, si es automático, el que Qt
+        ya calculó para esta pantalla al construir la QApplication."""
+        if cls._override_pt:
+            return cls._override_pt
+        app = QApplication.instance()
+        if app is not None:
+            size = app.font().pointSize()
+            if size > 0:
+                return size
+        return _FALLBACK_BASE_PT
+
+    @classmethod
+    def pt(cls, delta: int = 0) -> int:
+        """Tamaño relativo al base, en puntos (escala con la DPI/el sistema
+        porque `pt`, a diferencia de `px`, sí es DPI-aware en Qt Style Sheets)."""
+        return max(7, cls.base_pt() + delta)
+
+    @classmethod
+    def build_stylesheet(cls) -> str:
+        """Genera la hoja de estilo global. Se reconstruye (no se cachea) porque
+        depende del tamaño de fuente, que puede cambiar en Ajustes."""
+        return cls._stylesheet_template()
+
+    @classmethod
+    def _stylesheet_template(cls) -> str:
+        base = cls.pt(0)
+        title = cls.pt(5)
+        return f"""
     QMainWindow {{
         background: transparent;
-        color: {TEXT_WHITE};
+        color: {cls.TEXT_WHITE};
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Helvetica Neue", sans-serif;
     }}
 
     QDialog {{
-        background-color: {BG_DARK};
-        color: {TEXT_WHITE};
+        background-color: {cls.BG_DARK};
+        color: {cls.TEXT_WHITE};
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Helvetica Neue", sans-serif;
     }}
 
     QWidget {{
-        color: {TEXT_WHITE};
-        font-size: 13px;
+        color: {cls.TEXT_WHITE};
+        font-size: {base}pt;
     }}
 
     /* Contenedor raíz transparente: revela el escritorio en los márgenes de la ventana */
@@ -73,44 +116,44 @@ class Theme:
 
     /* Tarjetas de fondo Glass con bordes redondeados */
     QFrame#Card {{
-        background-color: {BG_PANEL};
-        border: 1px solid {BORDER_SUBTLE};
+        background-color: {cls.BG_PANEL};
+        border: 1px solid {cls.BORDER_SUBTLE};
         border-radius: 14px;
     }}
-    
+
     QFrame#Card:hover {{
-        border: 1px solid {BORDER_LIGHT};
+        border: 1px solid {cls.BORDER_LIGHT};
     }}
 
     QFrame#InnerCard {{
-        background-color: {BG_CARD};
-        border: 1px solid {BORDER_SUBTLE};
+        background-color: {cls.BG_CARD};
+        border: 1px solid {cls.BORDER_SUBTLE};
         border-radius: 12px;
     }}
 
     /* Contenedor Segmentado de Pestañas / Pastilla */
     QFrame#SegmentedContainer {{
-        background-color: {BG_PILL_CONTAINER};
-        border: 1px solid {BORDER_SUBTLE};
+        background-color: {cls.BG_PILL_CONTAINER};
+        border: 1px solid {cls.BORDER_SUBTLE};
         border-radius: 12px;
         padding: 4px;
     }}
 
     /* Botones Normales */
     QPushButton {{
-        background-color: {BG_CARD};
-        color: {TEXT_TITLE};
-        border: 1px solid {BORDER_SUBTLE};
+        background-color: {cls.BG_CARD};
+        color: {cls.TEXT_TITLE};
+        border: 1px solid {cls.BORDER_SUBTLE};
         border-radius: 10px;
         padding: 8px 16px;
         font-weight: 600;
-        font-size: 13px;
+        font-size: {base}pt;
     }}
 
     QPushButton:hover {{
-        background-color: {BG_CARD_HOVER};
-        border-color: {INDIGO_LIGHT};
-        color: {TEXT_WHITE};
+        background-color: {cls.BG_CARD_HOVER};
+        border-color: {cls.INDIGO_LIGHT};
+        color: {cls.TEXT_WHITE};
     }}
 
     QPushButton:pressed {{
@@ -125,7 +168,7 @@ class Theme:
         border-radius: 10px;
         padding: 10px 20px;
         font-weight: bold;
-        font-size: 13px;
+        font-size: {base}pt;
     }}
 
     QPushButton#PrimaryBtn:hover {{
@@ -148,7 +191,7 @@ class Theme:
 
     QPushButton#PillInactive {{
         background-color: transparent;
-        color: {TEXT_MUTED};
+        color: {cls.TEXT_MUTED};
         border: 1px solid transparent;
         border-radius: 10px;
         padding: 8px 16px;
@@ -156,9 +199,9 @@ class Theme:
     }}
 
     QPushButton#PillInactive:hover {{
-        background-color: {BG_CARD};
-        color: {TEXT_WHITE};
-        border: 1px solid {BORDER_SUBTLE};
+        background-color: {cls.BG_CARD};
+        color: {cls.TEXT_WHITE};
+        border: 1px solid {cls.BORDER_SUBTLE};
     }}
 
     /* Nota: los botones semáforo (cerrar/minimizar/maximizar) ya no usan QPushButton+QSS
@@ -174,8 +217,8 @@ class Theme:
     }}
 
     QTabBar {{
-        background-color: {BG_PILL_CONTAINER};
-        border: 1px solid {BORDER_SUBTLE};
+        background-color: {cls.BG_PILL_CONTAINER};
+        border: 1px solid {cls.BORDER_SUBTLE};
         border-radius: 12px;
         qproperty-drawBase: 0;
         padding: 3px;
@@ -183,9 +226,9 @@ class Theme:
 
     QTabBar::tab {{
         background: transparent;
-        color: {TEXT_MUTED};
+        color: {cls.TEXT_MUTED};
         padding: 8px 18px;
-        font-size: 13px;
+        font-size: {base}pt;
         font-weight: 600;
         border-radius: 9px;
         margin: 2px 3px;
@@ -193,8 +236,8 @@ class Theme:
     }}
 
     QTabBar::tab:hover {{
-        color: {TEXT_WHITE};
-        background: {BG_CARD};
+        color: {cls.TEXT_WHITE};
+        background: {cls.BG_CARD};
     }}
 
     QTabBar::tab:selected {{
@@ -206,9 +249,9 @@ class Theme:
 
     /* Sliders Modernos Estilo Custos */
     QSlider::groove:horizontal {{
-        border: 1px solid {BORDER_SUBTLE};
+        border: 1px solid {cls.BORDER_SUBTLE};
         height: 6px;
-        background: {BG_INPUT};
+        background: {cls.BG_INPUT};
         border-radius: 3px;
     }}
 
@@ -218,7 +261,7 @@ class Theme:
     }}
 
     QSlider::handle:horizontal {{
-        background: {TEXT_WHITE};
+        background: {cls.TEXT_WHITE};
         border: 3px solid #5b5bf0;
         width: 18px;
         margin-top: -6px;
@@ -234,20 +277,20 @@ class Theme:
     /* CheckBox estilo Custos */
     QCheckBox {{
         spacing: 10px;
-        color: {TEXT_TITLE};
-        font-size: 13px;
+        color: {cls.TEXT_TITLE};
+        font-size: {base}pt;
     }}
 
     QCheckBox::indicator {{
         width: 20px;
         height: 20px;
         border-radius: 6px;
-        border: 1px solid {BORDER_SUBTLE};
-        background-color: {BG_INPUT};
+        border: 1px solid {cls.BORDER_SUBTLE};
+        background-color: {cls.BG_INPUT};
     }}
 
     QCheckBox::indicator:hover {{
-        border-color: {INDIGO_LIGHT};
+        border-color: {cls.INDIGO_LIGHT};
     }}
 
     QCheckBox::indicator:checked {{
@@ -269,19 +312,19 @@ class Theme:
     /* Scrollbars elegantes */
     QScrollBar:vertical {{
         border: none;
-        background: {BG_DARK};
+        background: {cls.BG_DARK};
         width: 8px;
         border-radius: 4px;
     }}
 
     QScrollBar::handle:vertical {{
-        background: {BORDER_LIGHT};
+        background: {cls.BORDER_LIGHT};
         border-radius: 4px;
         min-height: 20px;
     }}
 
     QScrollBar::handle:vertical:hover {{
-        background: {INDIGO_LIGHT};
+        background: {cls.INDIGO_LIGHT};
     }}
 
     QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
@@ -290,16 +333,16 @@ class Theme:
 
     /* ComboBox */
     QComboBox {{
-        background-color: {BG_INPUT};
-        border: 1px solid {BORDER_SUBTLE};
+        background-color: {cls.BG_INPUT};
+        border: 1px solid {cls.BORDER_SUBTLE};
         border-radius: 10px;
         padding: 6px 14px;
-        color: {TEXT_TITLE};
+        color: {cls.TEXT_TITLE};
         min-height: 26px;
     }}
 
     QComboBox:hover {{
-        border-color: {BORDER_LIGHT};
+        border-color: {cls.BORDER_LIGHT};
     }}
 
     QComboBox::drop-down {{
@@ -308,28 +351,28 @@ class Theme:
     }}
 
     QComboBox QAbstractItemView {{
-        background-color: {BG_PANEL};
-        border: 1px solid {BORDER_SUBTLE};
-        selection-background-color: {BG_CARD_HOVER};
+        background-color: {cls.BG_PANEL};
+        border: 1px solid {cls.BORDER_SUBTLE};
+        selection-background-color: {cls.BG_CARD_HOVER};
         selection-color: #ffffff;
-        color: {TEXT_WHITE};
+        color: {cls.TEXT_WHITE};
         padding: 4px;
         border-radius: 8px;
     }}
 
     /* Etiquetas */
     QLabel {{
-        color: {TEXT_TITLE};
+        color: {cls.TEXT_TITLE};
     }}
 
     QLabel#Title {{
-        font-size: 18px;
+        font-size: {title}pt;
         font-weight: bold;
-        color: {TEXT_WHITE};
+        color: {cls.TEXT_WHITE};
     }}
 
     QLabel#Subtitle {{
-        font-size: 13px;
-        color: {TEXT_MUTED};
+        font-size: {base}pt;
+        color: {cls.TEXT_MUTED};
     }}
     """

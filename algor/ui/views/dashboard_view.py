@@ -8,6 +8,7 @@ from algor.core.sensors import get_sensor_map
 from algor.ui.components.circular_gauge import CircularGauge
 from algor.ui.components.live_chart import LiveChart
 from algor.ui.components.customize_dashboard_dialog import CustomizeDashboardDialog
+from algor.ui.views.fan_quick_control_dialog import FanQuickControlDialog
 from algor.ui.theme import Theme
 
 GAUGE_ACCENT_CYCLE = [
@@ -27,6 +28,7 @@ class DashboardView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._last_data: TelemetryData | None = None
+        self.worker = None
         self.gauge_widgets: dict[str, CircularGauge] = {}
         self.active_sensor_ids: list[str] = []
         self._gauges_synced_with_data = False
@@ -110,7 +112,7 @@ class DashboardView(QWidget):
         chart_vbox.setContentsMargins(12, 12, 12, 12)
 
         chart_title = QLabel(_("📈 Telemetría Térmica en Vivo"))
-        chart_title.setStyleSheet("font-weight: bold; color: #c9d1d9; font-size: 14px;")
+        chart_title.setStyleSheet(f"font-weight: bold; color: #c9d1d9; font-size: {Theme.pt(1)}pt;")
         chart_vbox.addWidget(chart_title)
 
         self.live_chart = LiveChart(max_samples=60)
@@ -125,7 +127,7 @@ class DashboardView(QWidget):
         info_vbox.setSpacing(10)
 
         info_title = QLabel(_("💻 Estado del Hardware"))
-        info_title.setStyleSheet("font-weight: bold; color: #c9d1d9; font-size: 14px;")
+        info_title.setStyleSheet(f"font-weight: bold; color: #c9d1d9; font-size: {Theme.pt(1)}pt;")
         info_vbox.addWidget(info_title)
 
         self.lbl_cpu_load = QLabel(_("CPU Uso: -- %"))
@@ -135,7 +137,7 @@ class DashboardView(QWidget):
         self.lbl_corsair_status = QLabel(_("Algor: Conectado"))
 
         for lbl in [self.lbl_cpu_load, self.lbl_cpu_freq, self.lbl_gpu_load, self.lbl_gpu_vram, self.lbl_corsair_status]:
-            lbl.setStyleSheet("color: #8b949e; font-size: 12px;")
+            lbl.setStyleSheet(f"color: #8b949e; font-size: {Theme.pt(-1)}pt;")
             info_vbox.addWidget(lbl)
 
         info_vbox.addStretch()
@@ -194,9 +196,16 @@ class DashboardView(QWidget):
                 sensor_id=sensor_id,
             )
             gauge.reordered.connect(self._on_gauge_reordered)
+            gauge.double_clicked.connect(self._on_gauge_double_clicked)
             self.gauge_widgets[sensor_id] = gauge
 
         self._relayout_grid()
+
+    def _on_gauge_double_clicked(self, sensor_id: str) -> None:
+        """Abre el diálogo de ajuste rápido para ventiladores o bomba."""
+        if (sensor_id.startswith("fan_") or sensor_id == "pump_rpm" or "fan" in sensor_id.lower() or "pwm" in sensor_id.lower()):
+            dialog = FanQuickControlDialog(sensor_id, self._last_data, worker=self.worker, parent=self)
+            dialog.exec()
 
     def _relayout_grid(self) -> None:
         """Reacomoda los medidores YA CREADOS en la cuadrícula según `gauges_columns`,
@@ -210,7 +219,7 @@ class DashboardView(QWidget):
                 self._empty_placeholder = QLabel(
                     _('Ningún sensor activo. Usa "Personalizar Panel" para agregar medidores.')
                 )
-                self._empty_placeholder.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: 12px;")
+                self._empty_placeholder.setStyleSheet(f"color: {Theme.TEXT_MUTED}; font-size: {Theme.pt(-1)}pt;")
                 self._empty_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.gauges_layout.addWidget(self._empty_placeholder, 0, 0)
             self._empty_placeholder.show()

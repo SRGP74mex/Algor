@@ -8,6 +8,13 @@ from algor.core.config import DEFAULT_CONFIG, ConfigManager
 
 class TestConfigManager(unittest.TestCase):
     def setUp(self):
+        # Aislado del ~/.config/algor real: sin esto, cada corrida de la suite
+        # leía y escribía la configuración real de quien ejecuta los tests.
+        self._tmpdir = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmpdir.cleanup)
+        patcher = patch.object(Path, "home", return_value=Path(self._tmpdir.name))
+        patcher.start()
+        self.addCleanup(patcher.stop)
         self.config_mgr = ConfigManager()
 
     def test_default_profiles_exist(self):
@@ -116,6 +123,33 @@ class TestConfigManager(unittest.TestCase):
             self.assertEqual(alerts["cpu_temp_warn"], DEFAULT_CONFIG["alerts"]["cpu_temp_warn"])
             self.assertEqual(alerts["cpu_temp_crit"], DEFAULT_CONFIG["alerts"]["cpu_temp_crit"])
             self.assertEqual(alerts["gpu_temp_warn"], 70)  # el valor válido del usuario se conserva
+
+    def test_ui_font_point_size_defaults_to_automatic(self):
+        self.assertIsNone(self.config_mgr.get("ui_font_point_size"))
+
+    def test_valid_ui_font_point_size_is_preserved(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(Path, "home", return_value=Path(directory)):
+            config_file = Path(directory) / ".config" / "algor" / "config.json"
+            config_file.parent.mkdir(parents=True)
+            config_file.write_text(json.dumps({"ui_font_point_size": 14}))
+            manager = ConfigManager()
+            self.assertEqual(manager.get("ui_font_point_size"), 14)
+
+    def test_invalid_ui_font_point_size_falls_back_to_automatic(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(Path, "home", return_value=Path(directory)):
+            config_file = Path(directory) / ".config" / "algor" / "config.json"
+            config_file.parent.mkdir(parents=True)
+            config_file.write_text(json.dumps({"ui_font_point_size": "grande"}))
+            manager = ConfigManager()
+            self.assertIsNone(manager.get("ui_font_point_size"))
+
+    def test_out_of_range_ui_font_point_size_falls_back_to_automatic(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(Path, "home", return_value=Path(directory)):
+            config_file = Path(directory) / ".config" / "algor" / "config.json"
+            config_file.parent.mkdir(parents=True)
+            config_file.write_text(json.dumps({"ui_font_point_size": 200}))
+            manager = ConfigManager()
+            self.assertIsNone(manager.get("ui_font_point_size"))
 
 
 if __name__ == "__main__":

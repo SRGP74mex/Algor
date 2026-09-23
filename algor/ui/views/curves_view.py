@@ -58,7 +58,7 @@ class CurvesView(QWidget):
         self.lbl_info_banner.setWordWrap(True)
         self.lbl_info_banner.setStyleSheet(
             f"background-color: {Theme.BG_CARD}; color: #8e92a8; border: 1px solid {Theme.BORDER_SUBTLE}; "
-            "border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: 500;"
+            f"border-radius: 10px; padding: 8px 14px; font-size: {Theme.pt(-1)}pt; font-weight: 500;"
         )
         layout.addWidget(self.lbl_info_banner)
 
@@ -125,7 +125,7 @@ class CurvesView(QWidget):
             "Identificar bomba y ventiladores. Nunca incluye la bomba."
         ))
         self.lbl_pwm_caption.setWordWrap(True)
-        self.lbl_pwm_caption.setStyleSheet("color: #8b949e; font-size: 11px;")
+        self.lbl_pwm_caption.setStyleSheet(f"color: #8b949e; font-size: {Theme.pt(-2)}pt;")
         layout.addWidget(self.lbl_pwm_caption)
 
     def set_pwm_eligible(self, eligible: bool) -> None:

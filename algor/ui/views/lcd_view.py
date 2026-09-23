@@ -11,6 +11,7 @@ from algor.core.lcd_memory import load_captured_image
 from algor.core.lcd_renderer import normalize_settings
 from algor.ui.components.lcd_preview import LCDCapPreview
 from algor.ui.components.color_picker import ColorPicker
+from algor.ui.theme import Theme
 
 
 class LCDView(QWidget):
@@ -35,7 +36,7 @@ class LCDView(QWidget):
         preview_card.setObjectName('Card')
         left = QVBoxLayout(preview_card)
         title = QLabel('Nautilus LCD Cap')
-        title.setStyleSheet('font-size: 19px; font-weight: 700; color: #f0f6fc;')
+        title.setStyleSheet(f'font-size: {Theme.pt(6)}pt; font-weight: 700; color: #f0f6fc;')
         left.addWidget(title)
         left.addWidget(QLabel(_('Contenido de pantalla · 480 × 480')))
         self.lcd_preview = LCDCapPreview()
@@ -54,7 +55,7 @@ class LCDView(QWidget):
         right = QVBoxLayout(controls)
         right.setSpacing(12)
         heading = QLabel(_('Contenido y sesión'))
-        heading.setStyleSheet('font-size: 16px; font-weight: 700;')
+        heading.setStyleSheet(f'font-size: {Theme.pt(3)}pt; font-weight: 700;')
         right.addWidget(heading)
         right.addWidget(QLabel(_('Mostrar')))
         self.combo_mode = QComboBox()
@@ -117,7 +118,7 @@ class LCDView(QWidget):
         right.addWidget(self.chk_autostart)
         limitation = QLabel(_('Líquido y bomba: sensores sin verificar.\nImágenes y GIF: guardado disponible.\nBomba y ventiladores: controlados por BIOS.'))
         limitation.setWordWrap(True)
-        limitation.setStyleSheet('color: #a5afc5; font-size: 12px;')
+        limitation.setStyleSheet(f'color: #a5afc5; font-size: {Theme.pt(-1)}pt;')
         right.addWidget(limitation)
         right.addStretch()
         self.btn_sync = QPushButton(_('Iniciar LCD'))
